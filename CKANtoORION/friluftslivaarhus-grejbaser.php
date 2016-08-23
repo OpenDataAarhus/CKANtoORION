@@ -14,11 +14,11 @@ $assets = array();
 foreach ($sensors_array as $record) {
 
   $contextElement = new stdClass();
-  $entityId = 'urn:oc:entity:aarhus:friluftsliv:shelters:' . md5($record->properties->Navn);
+  $entityId = 'urn:oc:entity:aarhus:friluftsliv:gearstations:' . md5($record->properties->Navn);
   $contextElement->id = $entityId;
 
   $contextElement->isPattern = 'false';
-  $contextElement->type = 'urn:oc:entityType:shelter';
+  $contextElement->type = 'urn:oc:entityType:gearstation';
 
   // attributes
   $attributes = array();
@@ -75,7 +75,7 @@ foreach ($sensors_array as $record) {
   $attributes[] = array(
     'name' => 'datasource',
     'type' => 'urn:oc:attributeType:datasource',
-    'value' => 'https://www.odaa.dk/dataset/shelters-i-aarhus',
+    'value' => 'https://www.odaa.dk/dataset/grejbaser-ved-aarhus-kommune',
     'metadatas' => array(
       array(
         'name' => 'datasourceExternal',
@@ -131,7 +131,7 @@ echo $assets_json;
 
 function getGeoData()
 {
-  $start_url = '/dataset/dc7ca516-90a3-4bea-8ceb-4bc58407d8bc/resource/4757ccaa-247f-4016-8a2b-9ca41f569db1/download/SheltersWGS84.json';
+  $start_url = '/dataset/cb4df027-acb2-4cbe-928a-73e58ae6caf3/resource/dbe736be-5851-4281-96c8-308602ed4250/download/GrejbaserWGS84.json';
 
   $client = new Client([
     // Base URI is used with relative requests
@@ -141,7 +141,7 @@ function getGeoData()
   ]);
 
   try {
-    $responce = $client->get($start_url);
+    $response = $client->get($start_url);
   } catch (RequestException $e) {
     echo Psr7\str($e->getRequest());
     if ($e->hasResponse()) {
@@ -150,10 +150,14 @@ function getGeoData()
     die('Network Error retrieving: https://www.odaa.dk' . $start_url);
   }
 
-//  $content = json_decode($responce->getBody()->getContents());
-  $content = $responce->getBody()->getContents();
+  $content = (string) $response->getBody();
+//  $content = $response->getBody()->getContents();
   $content = mb_detect_encoding($content) === 'UTF-8' ? $content : utf8_encode($content);
   $content = json_decode($content);
+
+  if(!$content) {
+    die('No content retrived from: https://www.odaa.dk' . $start_url);
+  }
 
   return $content->features;
 }
@@ -170,6 +174,7 @@ function sendUpdate($json)
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($ch, CURLOPT_TIMEOUT, 10000);
   curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+  curl_setopt($ch, CURLOPT_ENCODING, 'UTF-8');
   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     'Accept: application/json',
     'Content-Type: application/json',

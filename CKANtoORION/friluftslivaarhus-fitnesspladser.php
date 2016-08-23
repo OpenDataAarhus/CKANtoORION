@@ -14,11 +14,11 @@ $assets = array();
 foreach ($sensors_array as $record) {
 
   $contextElement = new stdClass();
-  $entityId = 'urn:oc:entity:aarhus:friluftsliv:shelters:' . md5($record->properties->Navn);
+  $entityId = 'urn:oc:entity:aarhus:friluftsliv:fitness:' . md5($record->properties->Navn);
   $contextElement->id = $entityId;
 
   $contextElement->isPattern = 'false';
-  $contextElement->type = 'urn:oc:entityType:shelter';
+  $contextElement->type = 'urn:oc:entityType:fitness';
 
   // attributes
   $attributes = array();
@@ -75,7 +75,7 @@ foreach ($sensors_array as $record) {
   $attributes[] = array(
     'name' => 'datasource',
     'type' => 'urn:oc:attributeType:datasource',
-    'value' => 'https://www.odaa.dk/dataset/shelters-i-aarhus',
+    'value' => 'https://www.odaa.dk/dataset/fitness-i-det-fri-aarhus',
     'metadatas' => array(
       array(
         'name' => 'datasourceExternal',
@@ -131,7 +131,7 @@ echo $assets_json;
 
 function getGeoData()
 {
-  $start_url = '/dataset/dc7ca516-90a3-4bea-8ceb-4bc58407d8bc/resource/4757ccaa-247f-4016-8a2b-9ca41f569db1/download/SheltersWGS84.json';
+  $start_url = '/dataset/ca1b668e-71d6-4890-b1d2-b222c89ea762/resource/194e7fad-907c-4271-9a55-55fe8f296104/download/FitnessidetfriWGS84.json';
 
   $client = new Client([
     // Base URI is used with relative requests

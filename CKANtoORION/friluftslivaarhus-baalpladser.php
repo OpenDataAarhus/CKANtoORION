@@ -14,11 +14,11 @@ $assets = array();
 foreach ($sensors_array as $record) {
 
   $contextElement = new stdClass();
-  $entityId = 'urn:oc:entity:aarhus:friluftsliv:shelters:' . md5($record->properties->Navn);
+  $entityId = 'urn:oc:entity:aarhus:friluftsliv:firepits:' . md5($record->properties->Navn);
   $contextElement->id = $entityId;
 
   $contextElement->isPattern = 'false';
-  $contextElement->type = 'urn:oc:entityType:shelter';
+  $contextElement->type = 'urn:oc:entityType:firepit';
 
   // attributes
   $attributes = array();
@@ -75,7 +75,7 @@ foreach ($sensors_array as $record) {
   $attributes[] = array(
     'name' => 'datasource',
     'type' => 'urn:oc:attributeType:datasource',
-    'value' => 'https://www.odaa.dk/dataset/shelters-i-aarhus',
+    'value' => 'https://www.odaa.dk/dataset/balpladser-i-aarhus',
     'metadatas' => array(
       array(
         'name' => 'datasourceExternal',
@@ -131,7 +131,7 @@ echo $assets_json;
 
 function getGeoData()
 {
-  $start_url = '/dataset/dc7ca516-90a3-4bea-8ceb-4bc58407d8bc/resource/4757ccaa-247f-4016-8a2b-9ca41f569db1/download/SheltersWGS84.json';
+  $start_url = '/dataset/16f6f2bd-5b57-4c37-ad3e-f4d930dff417/resource/e07c7c97-e522-481b-97bd-a3cf0b67da47/download/baalpladsWGS84.json';
 
   $client = new Client([
     // Base URI is used with relative requests
@@ -141,7 +141,7 @@ function getGeoData()
   ]);
 
   try {
-    $responce = $client->get($start_url);
+    $response = $client->get($start_url);
   } catch (RequestException $e) {
     echo Psr7\str($e->getRequest());
     if ($e->hasResponse()) {
@@ -150,10 +150,14 @@ function getGeoData()
     die('Network Error retrieving: https://www.odaa.dk' . $start_url);
   }
 
-//  $content = json_decode($responce->getBody()->getContents());
-  $content = $responce->getBody()->getContents();
+  $content = (string) $response->getBody();
+//  $content = $response->getBody()->getContents();
   $content = mb_detect_encoding($content) === 'UTF-8' ? $content : utf8_encode($content);
   $content = json_decode($content);
+
+  if(!$content) {
+    die('No content retrived from: https://www.odaa.dk' . $start_url);
+  }
 
   return $content->features;
 }

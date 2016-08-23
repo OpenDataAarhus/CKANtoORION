@@ -1,0 +1,8 @@
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
+
+# app/config/routing.yml
+ResqueBundle:
+    resource: "@ResqueBundle/Resources/config/routing.xml"
+    prefix:   /resque
