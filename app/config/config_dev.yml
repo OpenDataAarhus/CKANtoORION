@@ -6,6 +6,9 @@ framework:
         resource: "%kernel.root_dir%/config/routing_dev.yml"
         strict_requirements: true
     profiler: { only_exceptions: false }
+    session:
+        # http://stackoverflow.com/questions/37707905/php7-symfony-3-1-0-vagrant-failed-to-write-session-data
+        save_path:   "/var/lib/php/sessions"
 
 web_profiler:
     toolbar: true

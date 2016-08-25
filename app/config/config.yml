@@ -32,6 +32,37 @@ framework:
     http_method_override: true
     assets: ~
 
+# Guzzle config/clients
+guzzle:
+    clients:
+        orion_update:
+            base_url: "http://192.168.50.108:1026/v1/updateContext"
+
+            # custom headers
+            headers:
+                Content-Type: "application/json"
+                Accept: "application/json"
+                Fiware-Service: "organicity"
+                Fiware-ServicePath: "/"
+
+        orion_query:
+            base_url: "http://192.168.50.108:1026/v1/queryContext"
+
+            # custom headers
+            headers:
+                Content-Type: "application/json"
+                Accept: "application/json"
+                Fiware-Service: "organicity"
+                Fiware-ServicePath: "/"
+
+        odaa:
+            base_url: "https://odaa.dk"
+
+            # custom headers
+            headers:
+                Content-Type: "application/json"
+                Accept: "application/json"
+
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"

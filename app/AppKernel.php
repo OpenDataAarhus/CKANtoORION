@@ -18,6 +18,7 @@ class AppKernel extends Kernel
       new AppBundle\AppBundle(),
 
       new ResqueBundle\Resque\ResqueBundle(),
+      new EightPoints\Bundle\GuzzleBundle\GuzzleBundle(),
     ];
 
     if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

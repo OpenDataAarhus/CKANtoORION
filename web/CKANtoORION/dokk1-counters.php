@@ -161,7 +161,7 @@ function getCounterData($records = array(), $next_url = NULL)
   ]);
 
   try {
-    $responce = $client->get($next_url);
+    $response = $client->get($next_url);
   } catch (RequestException $e) {
     echo Psr7\str($e->getRequest());
     if ($e->hasResponse()) {
@@ -170,7 +170,10 @@ function getCounterData($records = array(), $next_url = NULL)
     die('Network Error retrieving: https://www.odaa.dk' . $next_url);
   }
 
-  $content = json_decode($responce->getBody()->getContents());
+//  $body = $response->getBody();
+//  $content2 = $body->getContents();
+
+  $content = json_decode($response->getBody()->getContents());
   $next_records = $content->result->records;
   $next_url = $content->result->_links->next;
 
