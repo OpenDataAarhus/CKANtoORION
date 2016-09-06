@@ -4,14 +4,18 @@ namespace AppBundle\Controller;
 
 use AppBundle\Feed\Dokk1CountersJob;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+
 
 class DefaultController extends Controller
 {
   /**
    * @Route("/", name="homepage")
+   * @Method("GET")
    */
   public function indexAction(Request $request)
   {
@@ -23,6 +27,7 @@ class DefaultController extends Controller
 
   /**
    * @Route("/dokk1counters", name="dokk1counters")
+   * @Method("GET")
    */
   public function dokk1CountersAction(Request $request)
   {
@@ -32,6 +37,40 @@ class DefaultController extends Controller
     $selection = array_slice($assets, 0, 5, true);
 
     return new JsonResponse($selection);
+  }
+
+  /**
+   * @Route("/routes", name="routes")
+   * @Method("GET")
+   * @Template("routes.html.twig")
+   *
+   * @return array
+   */
+  public function routeAction()
+  {
+    /** @var Router $router */
+    $router = $this->get('router');
+    $routes = $router->getRouteCollection();
+
+    foreach ($routes as $route) {
+      $this->convertController($route);
+    }
+
+    return [
+      'routes' => $routes
+    ];
+  }
+
+
+  private function convertController(\Symfony\Component\Routing\Route $route)
+  {
+    $nameParser = $this->get('controller_name_converter');
+    if ($route->hasDefault('_controller')) {
+      try {
+        $route->setDefault('_controller', $nameParser->build($route->getDefault('_controller')));
+      } catch (\InvalidArgumentException $e) {
+      }
+    }
   }
 
 }

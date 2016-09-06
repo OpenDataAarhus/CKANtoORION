@@ -26,7 +26,7 @@ class Dokk1CountersReader extends BaseFeedReader
       if (isset($sensors_array[$record->_id])) {
 
         $contextElement = new stdClass();
-        $entityId = 'urn:oc:entity:aarhus:visitors:dokk1:fixed:' . $record->_id;
+        $entityId = 'urn:oc:entity:aarhus:visitors:dokk3:fixed:' . $record->_id;
         $contextElement->id = $entityId;
 
         $contextElement->isPattern = 'false';

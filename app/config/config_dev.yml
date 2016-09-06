@@ -35,3 +35,12 @@ monolog:
 
 #swiftmailer:
 #    delivery_address: me@example.com
+
+# Guzzle config/clients
+guzzle:
+    clients:
+        orion_update:
+            base_url: "http://192.168.50.108:1026/v1/updateContext"
+
+        orion_query:
+            base_url: "http://192.168.50.108:1026/v1/queryContext"
