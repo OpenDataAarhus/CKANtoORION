@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Job\Dokk1CountersJob;
+use AppBundle\Job\RealTimeTrafficJob;
 use AppBundle\Job\TestJob;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,11 +30,12 @@ class CreateJobsCommand extends ContainerAwareCommand
 
     // create your job
     $jobs[] = new Dokk1CountersJob();
-    $jobs[] = new TestJob();
+    $jobs[] = new RealTimeTrafficJob();
 
     foreach ($jobs as $job) {
       // enqueue your job
-      $resque->enqueue($job);
+      $resque->removedDelayed($job);
+      $resque->enqueueIn(5, $job);
     }
   }
 }

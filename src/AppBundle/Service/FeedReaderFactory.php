@@ -3,8 +3,9 @@
 namespace AppBundle\Service;
 
 use Exception;
-use AppBundle\Feed\Dokk1CountersReader;
 use GuzzleHttp\Client;
+use AppBundle\Feed\RealTimeTrafficReader;
+use AppBundle\Feed\Dokk1CountersReader;
 
 class FeedReaderFactory
 {
@@ -18,11 +19,19 @@ class FeedReaderFactory
   }
 
   public function getFeedReader(string $identifier) {
-    if($identifier === 'dokk1_counters') {
-      return new Dokk1CountersReader($this->odaaClient, $this->orionUpdater);
-    }
 
-    throw new Exception('unknown feed $identifier');
+    switch ($identifier) {
+      case 'dokk1_counters':
+        return new Dokk1CountersReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'real_time_traffic':
+        return new RealTimeTrafficReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      default:
+        throw new Exception('unknown feed $identifier');
+    }
   }
 
 }

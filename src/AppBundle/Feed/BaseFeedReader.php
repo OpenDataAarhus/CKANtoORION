@@ -27,6 +27,13 @@ abstract class BaseFeedReader
 
   abstract public function normalizeForOrganicity();
 
+  public function syncToOrganicity() {
+    $assets = $this->normalizeForOrganicity();
+    $json = json_encode($assets);
+
+    $this->sendUpdate($json);
+  }
+
   protected function sendUpdate($json) {
     $client   = $this->orionUpdater;
 

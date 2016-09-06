@@ -13,30 +13,37 @@ use DateTime;
 use DateTimeZone;
 use stdClass;
 
-class Dokk1CountersReader extends BaseFeedReader
+class RealTimeTrafficReader extends BaseFeedReader
 {
-  const FEED_PATH = '/api/3/action/datastore_search?resource_id=b82383a4-97ec-4377-b0ea-94b2e6fe70c0';
+  // Sensor list/meta data
+  const FEED_PATH_SENSORS = '/api/action/datastore_search?resource_id=c3097987-c394-4092-ad1d-ad86a81dbf37';
+
+  // Sensor measurements
+  const FEED_PATH_TRAFFIC = '/api/action/datastore_search?resource_id=b3eeb0ff-c8a8-4824-99d6-e0a3747c8b0d';
 
   public function normalizeForOrganicity()
   {
-    $sensors_array = $this->getPagedData(self::FEED_PATH);
+    $sensors_array = $this->getPagedData(self::FEED_PATH_SENSORS);
+    $traffic_array = $this->getPagedData(self::FEED_PATH_TRAFFIC);
     $assets = array();
 
-    foreach ($sensors_array as $record) {
+    foreach ($traffic_array as $record) {
       if (isset($sensors_array[$record->_id])) {
 
+        $record->sensor = $sensors_array[$record->_id];
+
         $contextElement = new stdClass();
-        $entityId = 'urn:oc:entity:aarhus:visitors:dokk4:fixed:' . $record->_id;
+        $entityId = 'urn:oc:entity:aarhus:traffic:fixed:' . $record->_id;
         $contextElement->id = $entityId;
 
         $contextElement->isPattern = 'false';
-        $contextElement->type = 'urn:oc:entityType:iotdevice:records';
+        $contextElement->type = 'urn:oc:entityType:iotdevice:traffic';
 
         // attributes
         $attributes = array();
 
         // Time
-        $time = DateTime::createFromFormat('Y-m-d\TH:i:s', $record->time);
+        $time = DateTime::createFromFormat('Y-m-d\TH:i:s', $record->TIMESTAMP);
         //2016-06-28T09:05:00
         $time->setTimezone(new DateTimeZone('Europe/Copenhagen'));
 
@@ -47,50 +54,12 @@ class Dokk1CountersReader extends BaseFeedReader
           'value' => $timeinstant
         );
 
-        // Numbers
-        $attributes[] = array(
-          'name' => 'visitors:in',
-          'value' => $record->in,
-          'metadatas' => array(
-            array(
-              'name' => 'unit',
-              'type' => 'urn:oc:dataType:string',
-              'value' => 'urn:oc:uom:peoplePerHour'
-            ),
-            array(
-              'name' => 'description',
-              'type' => 'urn:oc:dataType:string',
-              // @TODO: Add proper description for how data i measured
-              'value' => '@TODO'
-            )
-          )
-        );
-
-        $attributes[] = array(
-          'name' => 'visitors:out',
-          'value' => $record->out,
-          'metadatas' => array(
-            array(
-              'name' => 'unit',
-              'type' => 'urn:oc:dataType:string',
-              'value' => 'urn:oc:uom:peoplePerHour'
-            ),
-            array(
-              'name' => 'description',
-              'type' => 'urn:oc:dataType:string',
-              // @TODO: Add proper description for how data i measured
-              'value' => '@TODO'
-            )
-          )
-        );
-
         // Location
-        $dokk1_LAT = 56.153394;
-        $dokk1_LNG = 10.213934;
+        $location = isset($record->sensor->POINT_2_STREET) ? $record->sensor->POINT_2_STREET : '';
         $attributes[] = array(
           'name' => 'position',
           'type' => 'coords',
-          'value' => $dokk1_LAT . ',' . $dokk1_LNG,
+          'value' => $record->sensor->POINT_2_LAT . ',' . $record->sensor->POINT_2_LNG,
           'metadatas' => array(
             array(
               'name' => 'location',
@@ -100,11 +69,31 @@ class Dokk1CountersReader extends BaseFeedReader
           )
         );
 
+        // Speed
+        $attributes[] = array(
+          'name' => 'speed:average',
+          'type' => 'urn:oc:attributeType:speed:average',
+          'value' => strval($record->avgSpeed),
+          'metadatas' => array(
+            array(
+              'name' => 'unit',
+              'type' => 'urn:oc:dataType:string',
+              'value' => 'urn:oc:uom:kilometrePerHour'
+            ),
+            array(
+              'name' => 'description',
+              'type' => 'urn:oc:dataType:string',
+              // @TODO: Add proper description for how data i measured
+              'value' => '@TODO'
+            )
+          )
+        );
+
         // Datasource
         $attributes[] = array(
           'name' => 'datasource',
           'type' => 'urn:oc:attributeType:datasource',
-          'value' => 'https://www.odaa.dk/dataset/taellekamera-pa-dokk1',
+          'value' => 'https://www.odaa.dk/dataset/realtids-trafikdata',
           'metadatas' => array(
             array(
               'name' => 'datasourceExternal',
@@ -144,7 +133,7 @@ class Dokk1CountersReader extends BaseFeedReader
         $assets[] = $asset;
 
       } else {
-        throw new Exception('Unmapped sensor');
+        die('Unmapped sensor');
       }
     }
 

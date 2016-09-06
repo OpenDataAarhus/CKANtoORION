@@ -4,9 +4,9 @@ namespace AppBundle\Job;
 
 use ResqueBundle\Resque\ContainerAwareJob;
 
-class Dokk1CountersJob extends ContainerAwareJob
+class RealTimeTrafficJob extends ContainerAwareJob
 {
-  const INTERVAL = 60;
+  const INTERVAL = 300;
 
   public function run($args)
   {
