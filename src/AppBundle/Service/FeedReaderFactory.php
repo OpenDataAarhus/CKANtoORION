@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Feed\FriluftslivFirepitsReader;
 use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
@@ -27,6 +28,10 @@ class FeedReaderFactory
 
       case 'real_time_traffic':
         return new RealTimeTrafficReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_firepits':
+        return new FriluftslivFirepitsReader($this->odaaClient, $this->orionUpdater);
         break;
 
       default:

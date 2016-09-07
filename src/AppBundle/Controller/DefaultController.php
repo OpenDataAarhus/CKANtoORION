@@ -56,6 +56,20 @@ class DefaultController extends Controller
   }
 
   /**
+   * @Route("/friluftsliv_firepits", name="friluftsliv_firepits")
+   * @Method("GET")
+   */
+  public function friluftslivFirepitsAction(Request $request)
+  {
+    $feed = $this->get('app.feed_reader_factory')->getFeedReader('friluftsliv_firepits');
+    $assets = $feed->normalizeForOrganicity();
+
+    $selection = array_slice($assets, 0, 5, true);
+
+    return new JsonResponse($selection);
+  }
+
+  /**
    * @Route("/routes", name="routes")
    * @Method("GET")
    * @Template("routes.html.twig")
