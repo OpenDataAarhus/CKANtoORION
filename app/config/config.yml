@@ -56,7 +56,9 @@ guzzle:
                 Fiware-ServicePath: "/"
 
         odaa:
-            base_url: "https://odaa.dk"
+            base_url: "https://www.odaa.dk"
+            options:
+              timeout: 2
 
             # custom headers
             headers:

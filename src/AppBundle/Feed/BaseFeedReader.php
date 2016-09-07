@@ -27,20 +27,27 @@ abstract class BaseFeedReader
 
   abstract public function normalizeForOrganicity();
 
-  public function syncToOrganicity() {
+  public function syncToOrganicity()
+  {
     $assets = $this->normalizeForOrganicity();
-    $json = json_encode($assets);
 
-    $this->sendUpdate($json);
+    foreach ($assets as $asset) {
+      $json = json_encode($asset);
+      $this->sendUpdate($json);
+    }
+
   }
 
-  protected function sendUpdate($json) {
-    $client   = $this->orionUpdater;
+  protected function sendUpdate($json)
+  {
+    $client = $this->orionUpdater;
 
     try {
-      $request = $client->post('', array(
+      $response = $client->post('', array(
         'body' => $json
       ));
+      $response->getBody()->rewind();
+      $content = json_decode($response->getBody()->getContents());
     } catch (RequestException $e) {
       echo Psr7\str($e->getRequest());
       if ($e->hasResponse()) {
@@ -48,19 +55,16 @@ abstract class BaseFeedReader
       }
       throw new Exception('Network Error: Cannot post to Orion');
     }
+
+    if (isset($content->errorCode)) {
+      throw new Exception('Orion Error: Code: ' . $content->errorCode->code . ', Reason: ' . $content->errorCode->reasonPhrase . ', Details: ' . $content->errorCode->details);
+    }
   }
 
   protected function getPagedData($next_url, $records = array())
   {
-    if(!empty($next_url)) {
+    if (!empty($next_url)) {
       $client = $this->odaaClient;
-
-      $client = new Client([
-        // Base URI is used with relative requests
-        'base_uri' => 'https://www.odaa.dk',
-        // You can set any number of default request options.
-        'timeout' => 2.0,
-      ]);
 
       try {
         $response = $client->get($next_url);
@@ -72,7 +76,12 @@ abstract class BaseFeedReader
         throw new Exception('Network Error retrieving: ' . $next_url);
       }
 
+      // https://github.com/8p/GuzzleBundle/issues/48
+      $response->getBody()->rewind();
+
       $content = json_decode($response->getBody()->getContents());
+      $content = mb_detect_encoding($content) === 'UTF-8' ? $content : utf8_encode($content);
+
       $next_records = $content->result->records;
       $next_url = $content->result->_links->next;
 
@@ -87,6 +96,38 @@ abstract class BaseFeedReader
     }
 
     throw new Exception('$next_url cannot be empty');
+  }
+
+  protected function getGeoData($url, $records = array())
+  {
+    if (!empty($url)) {
+      $client = $this->odaaClient;
+
+      try {
+        $response = $client->get($url);
+      } catch (RequestException $e) {
+        echo Psr7\str($e->getRequest());
+        if ($e->hasResponse()) {
+          echo Psr7\str($e->getResponse());
+        }
+        throw new Exception('Network Error retrieving: ' . $url);
+      }
+
+      // https://github.com/8p/GuzzleBundle/issues/48
+      $response->getBody()->rewind();
+      $content = $response->getBody()->getContents();
+
+      $content = mb_detect_encoding($content) === 'UTF-8' ? $content : utf8_encode($content);
+      $content = json_decode($content);
+
+      if (!$content) {
+        throw new Exception('No content retrived from: ' . $url);
+      }
+
+      return $content->features;
+    }
+
+    throw new Exception('$url cannot be empty');
   }
 
 }
