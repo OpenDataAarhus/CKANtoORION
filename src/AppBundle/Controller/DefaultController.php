@@ -70,6 +70,20 @@ class DefaultController extends Controller
   }
 
   /**
+   * @Route("/friluftsliv_fitness", name="friluftsliv_fitness")
+   * @Method("GET")
+   */
+  public function friluftslivFitnessGymAction(Request $request)
+  {
+    $feed = $this->get('app.feed_reader_factory')->getFeedReader('friluftsliv_fitness');
+    $assets = $feed->normalizeForOrganicity();
+
+    $selection = array_slice($assets, 0, 5, true);
+
+    return new JsonResponse($selection);
+  }
+
+  /**
    * @Route("/routes", name="routes")
    * @Method("GET")
    * @Template("routes.html.twig")

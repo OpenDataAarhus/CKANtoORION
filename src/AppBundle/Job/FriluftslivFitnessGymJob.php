@@ -4,7 +4,7 @@ namespace AppBundle\Job;
 
 use ResqueBundle\Resque\ContainerAwareJob;
 
-class FriluftslivFirepitsJob extends ContainerAwareJob
+class FriluftslivFitnessGymJob extends ContainerAwareJob
 {
   const INTERVAL = 60;
 
@@ -13,7 +13,7 @@ class FriluftslivFirepitsJob extends ContainerAwareJob
     // get resque
     $resque = $this->getContainer()->get('resque');
 
-    $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('friluftsliv_firepits');
+    $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('friluftsliv_fitness');
     $feed->syncToOrganicity();
 
     $resque->enqueueIn(self::INTERVAL, $this);

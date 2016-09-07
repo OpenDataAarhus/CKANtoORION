@@ -80,7 +80,6 @@ abstract class BaseFeedReader
       $response->getBody()->rewind();
 
       $content = json_decode($response->getBody()->getContents());
-      $content = mb_detect_encoding($content) === 'UTF-8' ? $content : utf8_encode($content);
 
       $next_records = $content->result->records;
       $next_url = $content->result->_links->next;

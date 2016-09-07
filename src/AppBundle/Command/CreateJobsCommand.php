@@ -4,6 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Job\FriluftslivFirepitsJob;
 use AppBundle\Job\Dokk1CountersJob;
+use AppBundle\Job\FriluftslivFitnessGymJob;
 use AppBundle\Job\RealTimeTrafficJob;
 use AppBundle\Job\TestJob;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -33,11 +34,12 @@ class CreateJobsCommand extends ContainerAwareCommand
     $jobs[] = new Dokk1CountersJob();
     $jobs[] = new RealTimeTrafficJob();
     $jobs[] = new FriluftslivFirepitsJob();
+    $jobs[] = new FriluftslivFitnessGymJob();
 
     foreach ($jobs as $job) {
       // enqueue your job
       $resque->removedDelayed($job);
-      $resque->enqueueIn(5, $job);
+      $resque->enqueueIn(60, $job);
     }
   }
 }
