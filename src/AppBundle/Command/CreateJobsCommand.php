@@ -2,11 +2,11 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Job\FriluftslivFitnessGearStationJob;
 use AppBundle\Job\FriluftslivFirepitsJob;
 use AppBundle\Job\Dokk1CountersJob;
 use AppBundle\Job\FriluftslivFitnessGymJob;
 use AppBundle\Job\RealTimeTrafficJob;
-use AppBundle\Job\TestJob;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,6 +35,7 @@ class CreateJobsCommand extends ContainerAwareCommand
     $jobs[] = new RealTimeTrafficJob();
     $jobs[] = new FriluftslivFirepitsJob();
     $jobs[] = new FriluftslivFitnessGymJob();
+    $jobs[] = new FriluftslivFitnessGearStationJob();
 
     foreach ($jobs as $job) {
       // enqueue your job

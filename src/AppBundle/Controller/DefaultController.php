@@ -84,6 +84,20 @@ class DefaultController extends Controller
   }
 
   /**
+   * @Route("/friluftsliv_gearstation", name="friluftsliv_gearstation")
+   * @Method("GET")
+   */
+  public function friluftslivGearStationAction(Request $request)
+  {
+    $feed = $this->get('app.feed_reader_factory')->getFeedReader('friluftsliv_gearstation');
+    $assets = $feed->normalizeForOrganicity();
+
+    $selection = array_slice($assets, 0, 5, true);
+
+    return new JsonResponse($selection);
+  }
+
+  /**
    * @Route("/routes", name="routes")
    * @Method("GET")
    * @Template("routes.html.twig")
