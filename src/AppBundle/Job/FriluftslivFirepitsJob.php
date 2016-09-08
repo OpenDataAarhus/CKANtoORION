@@ -6,7 +6,7 @@ use ResqueBundle\Resque\ContainerAwareJob;
 
 class FriluftslivFirepitsJob extends ContainerAwareJob
 {
-  const INTERVAL = 60;
+  const INTERVAL = 24 * 60 * 60;
 
   public function run($args)
   {

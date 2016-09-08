@@ -6,7 +6,7 @@ use ResqueBundle\Resque\ContainerAwareJob;
 
 class RealTimeTrafficJob extends ContainerAwareJob
 {
-  const INTERVAL = 300;
+  const INTERVAL = 5 * 60;
 
   public function run($args)
   {

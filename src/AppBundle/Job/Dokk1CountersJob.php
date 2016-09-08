@@ -6,7 +6,7 @@ use ResqueBundle\Resque\ContainerAwareJob;
 
 class Dokk1CountersJob extends ContainerAwareJob
 {
-  const INTERVAL = 60;
+  const INTERVAL = 60 * 60;
 
   public function run($args)
   {
