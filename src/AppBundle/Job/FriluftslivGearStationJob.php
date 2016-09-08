@@ -4,7 +4,7 @@ namespace AppBundle\Job;
 
 use ResqueBundle\Resque\ContainerAwareJob;
 
-class FriluftslivFitnessGearStationJob extends ContainerAwareJob
+class FriluftslivGearStationJob extends ContainerAwareJob
 {
   const INTERVAL = 60;
 

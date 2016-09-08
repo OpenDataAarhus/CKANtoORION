@@ -2,7 +2,7 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Job\FriluftslivFitnessGearStationJob;
+use AppBundle\Job\FriluftslivGearStationJob;
 use AppBundle\Job\FriluftslivFirepitsJob;
 use AppBundle\Job\Dokk1CountersJob;
 use AppBundle\Job\FriluftslivFitnessGymJob;
@@ -35,7 +35,7 @@ class CreateJobsCommand extends ContainerAwareCommand
     $jobs[] = new RealTimeTrafficJob();
     $jobs[] = new FriluftslivFirepitsJob();
     $jobs[] = new FriluftslivFitnessGymJob();
-    $jobs[] = new FriluftslivFitnessGearStationJob();
+    $jobs[] = new FriluftslivGearStationJob();
 
     foreach ($jobs as $job) {
       // enqueue your job

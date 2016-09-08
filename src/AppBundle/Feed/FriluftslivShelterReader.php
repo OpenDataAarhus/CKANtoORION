@@ -13,9 +13,9 @@ use DateTime;
 use DateTimeZone;
 use stdClass;
 
-class FriluftslivFitnessGearStationReader extends BaseFeedReader
+class FriluftslivShelterReader extends BaseFeedReader
 {
-  const FEED_PATH = '/dataset/cb4df027-acb2-4cbe-928a-73e58ae6caf3/resource/dbe736be-5851-4281-96c8-308602ed4250/download/GrejbaserWGS84.json';
+  const FEED_PATH = '/dataset/dc7ca516-90a3-4bea-8ceb-4bc58407d8bc/resource/4757ccaa-247f-4016-8a2b-9ca41f569db1/download/SheltersWGS84.json';
 
   public function normalizeForOrganicity()
   {
@@ -26,11 +26,11 @@ class FriluftslivFitnessGearStationReader extends BaseFeedReader
     foreach ($sensors_array as $record) {
 
       $contextElement = new stdClass();
-      $entityId = 'urn:oc:entity:aarhus:friluftsliv:gearstations:' . md5($record->properties->Navn);
+      $entityId = 'urn:oc:entity:aarhus:friluftsliv:shelters:' . md5($record->properties->Navn);
       $contextElement->id = $entityId;
 
       $contextElement->isPattern = 'false';
-      $contextElement->type = 'urn:oc:entityType:gearstation';
+      $contextElement->type = 'urn:oc:entityType:shelter';
 
       // attributes
       $attributes = array();
@@ -87,7 +87,7 @@ class FriluftslivFitnessGearStationReader extends BaseFeedReader
       $attributes[] = array(
         'name' => 'datasource',
         'type' => 'urn:oc:attributeType:datasource',
-        'value' => 'https://www.odaa.dk/dataset/grejbaser-ved-aarhus-kommune',
+        'value' => 'https://www.odaa.dk/dataset/shelters-i-aarhus',
         'metadatas' => array(
           array(
             'name' => 'datasourceExternal',
