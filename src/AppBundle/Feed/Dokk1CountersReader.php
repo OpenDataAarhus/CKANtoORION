@@ -51,7 +51,7 @@ class Dokk1CountersReader extends BaseFeedReader
         $attributes[] = array(
           'name' => 'visitors:in',
           'value' => $record->in,
-          'metadatas' => array(
+          'metadata' => array(
             array(
               'name' => 'unit',
               'type' => 'urn:oc:dataType:string',
@@ -69,7 +69,7 @@ class Dokk1CountersReader extends BaseFeedReader
         $attributes[] = array(
           'name' => 'visitors:out',
           'value' => $record->out,
-          'metadatas' => array(
+          'metadata' => array(
             array(
               'name' => 'unit',
               'type' => 'urn:oc:dataType:string',
@@ -91,7 +91,7 @@ class Dokk1CountersReader extends BaseFeedReader
           'name' => 'position',
           'type' => 'coords',
           'value' => $dokk1_LAT . ',' . $dokk1_LNG,
-          'metadatas' => array(
+          'metadata' => array(
             array(
               'name' => 'location',
               'type' => 'string',
@@ -105,7 +105,7 @@ class Dokk1CountersReader extends BaseFeedReader
           'name' => 'datasource',
           'type' => 'urn:oc:attributeType:datasource',
           'value' => 'https://www.odaa.dk/dataset/taellekamera-pa-dokk1',
-          'metadatas' => array(
+          'metadata' => array(
             array(
               'name' => 'datasourceExternal',
               'type' => 'urn:oc:dataType:boolean',
@@ -119,7 +119,7 @@ class Dokk1CountersReader extends BaseFeedReader
           'name' => 'reputation',
           'type' => 'urn:oc:attributeType:reputation',
           'value' => '-1',
-          'metadatas' => array(
+          'metadata' => array(
             array(
               'name' => 'description',
               'type' => 'urn:oc:dataType:string',

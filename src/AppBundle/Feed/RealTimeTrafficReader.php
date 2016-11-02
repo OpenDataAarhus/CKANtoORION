@@ -60,7 +60,7 @@ class RealTimeTrafficReader extends BaseFeedReader
           'name' => 'position',
           'type' => 'coords',
           'value' => $record->sensor->POINT_2_LAT . ',' . $record->sensor->POINT_2_LNG,
-          'metadatas' => array(
+          'metadata' => array(
             array(
               'name' => 'location',
               'type' => 'string',
@@ -74,7 +74,7 @@ class RealTimeTrafficReader extends BaseFeedReader
           'name' => 'speed:average',
           'type' => 'urn:oc:attributeType:speed:average',
           'value' => strval($record->avgSpeed),
-          'metadatas' => array(
+          'metadata' => array(
             array(
               'name' => 'unit',
               'type' => 'urn:oc:dataType:string',
@@ -94,7 +94,7 @@ class RealTimeTrafficReader extends BaseFeedReader
           'name' => 'datasource',
           'type' => 'urn:oc:attributeType:datasource',
           'value' => 'https://www.odaa.dk/dataset/realtids-trafikdata',
-          'metadatas' => array(
+          'metadata' => array(
             array(
               'name' => 'datasourceExternal',
               'type' => 'urn:oc:dataType:boolean',
@@ -108,7 +108,7 @@ class RealTimeTrafficReader extends BaseFeedReader
           'name' => 'reputation',
           'type' => 'urn:oc:attributeType:reputation',
           'value' => '-1',
-          'metadatas' => array(
+          'metadata' => array(
             array(
               'name' => 'description',
               'type' => 'urn:oc:dataType:string',

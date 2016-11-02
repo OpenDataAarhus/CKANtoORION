@@ -52,7 +52,7 @@ class FriluftslivGearStationReader extends BaseFeedReader
       $attributes[] = array(
         'name' => 'bookable',
         'value' => $bookable,
-        'metadatas' => array(
+        'metadata' => array(
           array(
             'name' => 'unit',
             'type' => 'urn:oc:dataType:string',
@@ -74,7 +74,7 @@ class FriluftslivGearStationReader extends BaseFeedReader
         'name' => 'position',
         'type' => 'coords',
         'value' => $point_LAT . ',' . $point_LNG,
-        'metadatas' => array(
+        'metadata' => array(
           array(
             'name' => 'location',
             'type' => 'string',
@@ -88,7 +88,7 @@ class FriluftslivGearStationReader extends BaseFeedReader
         'name' => 'datasource',
         'type' => 'urn:oc:attributeType:datasource',
         'value' => 'https://www.odaa.dk/dataset/grejbaser-ved-aarhus-kommune',
-        'metadatas' => array(
+        'metadata' => array(
           array(
             'name' => 'datasourceExternal',
             'type' => 'urn:oc:dataType:boolean',
@@ -102,7 +102,7 @@ class FriluftslivGearStationReader extends BaseFeedReader
         'name' => 'reputation',
         'type' => 'urn:oc:attributeType:reputation',
         'value' => '-1',
-        'metadatas' => array(
+        'metadata' => array(
           array(
             'name' => 'description',
             'type' => 'urn:oc:dataType:string',
