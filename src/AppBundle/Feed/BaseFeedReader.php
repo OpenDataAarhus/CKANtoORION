@@ -13,6 +13,7 @@ use GuzzleHttp\Promise;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use Exception;
+use ForceUTF8\Encoding;
 
 abstract class BaseFeedReader
 {
@@ -116,11 +117,15 @@ abstract class BaseFeedReader
       $response->getBody()->rewind();
       $content = $response->getBody()->getContents();
 
-      $content = mb_detect_encoding($content) === 'UTF-8' ? $content : utf8_encode($content);
+      if (empty($content)) {
+        throw new Exception('No content retrived from: ' . $url );
+      }
+
+      $content = Encoding::toUTF8($content);
       $content = json_decode($content);
 
       if (!$content) {
-        throw new Exception('No content retrived from: ' . $url);
+        throw new Exception('JSON Decode Error: ' . json_last_error_msg() );
       }
 
       return $content->features;
