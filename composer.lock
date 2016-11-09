@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/chrisboulton/php-resque.git",
-                "reference": "a03f00f2a0939642da88845458972e5f7ba0a0ad"
+                "reference": "cf187fae522df085f79837d3763645da066194d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/a03f00f2a0939642da88845458972e5f7ba0a0ad",
-                "reference": "a03f00f2a0939642da88845458972e5f7ba0a0ad",
+                "url": "https://api.github.com/repos/chrisboulton/php-resque/zipball/cf187fae522df085f79837d3763645da066194d6",
+                "reference": "cf187fae522df085f79837d3763645da066194d6",
                 "shasum": ""
             },
             "require": {
@@ -60,7 +60,7 @@
                 "redis",
                 "resque"
             ],
-            "time": "2016-10-20 22:00:54"
+            "time": "2016-11-03 21:56:00"
         },
         {
             "name": "chrisboulton/php-resque-scheduler",
@@ -907,17 +907,17 @@
         },
         {
             "name": "eightpoints/guzzle-bundle",
-            "version": "v5.0.3",
+            "version": "v5.1.0",
             "target-dir": "EightPoints/Bundle/GuzzleBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/8p/GuzzleBundle.git",
-                "reference": "9afc670d5b730ab1d90d92f50b86fa5282279d28"
+                "reference": "cc36257218b6174f2264ce84511c12f3a6d85bc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/8p/GuzzleBundle/zipball/9afc670d5b730ab1d90d92f50b86fa5282279d28",
-                "reference": "9afc670d5b730ab1d90d92f50b86fa5282279d28",
+                "url": "https://api.github.com/repos/8p/GuzzleBundle/zipball/cc36257218b6174f2264ce84511c12f3a6d85bc3",
+                "reference": "cc36257218b6174f2264ce84511c12f3a6d85bc3",
                 "shasum": ""
             },
             "require": {
@@ -967,7 +967,7 @@
                 "symfony",
                 "web service"
             ],
-            "time": "2016-09-30T17:12:30+00:00"
+            "time": "2016-11-02T21:17:50+00:00"
         },
         {
             "name": "eightpoints/guzzle-wsse-middleware",

@@ -32,16 +32,23 @@ abstract class BaseFeedReader
   {
     $assets = $this->normalizeForOrganicity();
 
-    foreach ($assets as $asset) {
-      $json = json_encode($asset);
-      $this->sendUpdate($json);
-    }
-
+    $this->batchAction($assets);
   }
 
-  protected function sendUpdate($json)
+  /**
+   * @param $assets
+   * @param $actionType APPEND or UPDATE
+   * @throws Exception
+   */
+
+  protected function batchAction($assets, $actionType = 'APPEND')
   {
     $client = $this->orionUpdater;
+    $body = array(
+      'actionType' => $actionType,
+      'entities' => $assets
+    );
+    $json = json_encode($body);
 
     try {
       $response = $client->post('', array(
@@ -50,15 +57,15 @@ abstract class BaseFeedReader
       $response->getBody()->rewind();
       $content = json_decode($response->getBody()->getContents());
     } catch (RequestException $e) {
-      echo Psr7\str($e->getRequest());
-      if ($e->hasResponse()) {
-        echo Psr7\str($e->getResponse());
-      }
-      throw new Exception('Network Error: Cannot post to Orion');
-    }
 
-    if (isset($content->errorCode)) {
-      throw new Exception('Orion Error: Code: ' . $content->errorCode->code . ', Reason: ' . $content->errorCode->reasonPhrase . ', Details: ' . $content->errorCode->details);
+      if($e->getResponse()) {
+        $body = json_decode($e->getResponse()->getBody()->getContents());
+        $error = isset($body->error) ? $body->error : 'UNKNOWN';
+        $description = isset($body->description) ? $body->description : 'UNKNOWN';
+        throw new Exception("Orion Error: " . $e->getCode() . ', ' . $error . ', ' . $description);
+      } else {
+        throw $e;
+      }
     }
   }
 

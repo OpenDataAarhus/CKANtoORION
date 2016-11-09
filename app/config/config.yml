@@ -35,8 +35,8 @@ framework:
 # Guzzle config/clients
 guzzle:
     clients:
-        orion_update:
-            base_url: "http://139.162.167.169:1026/v1/updateContext"
+        orion_batch:
+            base_url: "http://139.162.167.169:1026/v2/op/update"
 
             # custom headers
             headers:

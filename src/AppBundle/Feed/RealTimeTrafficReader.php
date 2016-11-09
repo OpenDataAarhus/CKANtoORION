@@ -32,103 +32,51 @@ class RealTimeTrafficReader extends BaseFeedReader
 
         $record->sensor = $sensors_array[$record->_id];
 
-        $contextElement = new stdClass();
-        $entityId = 'urn:oc:entity:aarhus:traffic:fixed:' . $record->_id;
-        $contextElement->id = $entityId;
+        $asset = array(
+          'id' => 'urn:oc:entity:aarhus:traffic:fixed:BT' . $record->_id,
+          'type' => 'urn:oc:entityType:iotdevice:traffic',
 
-        $contextElement->isPattern = 'false';
-        $contextElement->type = 'urn:oc:entityType:iotdevice:traffic';
-
-        // attributes
-        $attributes = array();
+          'origin' => array(
+            'type' => 'urn:oc:attributeType:origin',
+            'value' => 'Traffic flow data from ODAA',
+            'metadata' => array(
+              'urls' => array(
+                'type' => 'urls',
+                'value' => 'https://www.odaa.dk/dataset/realtids-trafikdata'
+              )
+            )
+          )
+        );
 
         // Time
         $time = DateTime::createFromFormat('Y-m-d\TH:i:s', $record->TIMESTAMP);
-        //2016-06-28T09:05:00
         $time->setTimezone(new DateTimeZone('Europe/Copenhagen'));
 
-        $timeinstant = gmdate('Y-m-d\TH:i:s.000\Z', $time->getTimestamp());
-        $attributes[] = array(
-          'name' => 'TimeInstant',
-          'type' => 'ISO8601',
-          'value' => $timeinstant
+        $timeInstant = array(
+          'type' => 'urn:oc:attributeType:ISO8601',
+          'value' => gmdate('Y-m-d\TH:i:s.000\Z', $time->getTimestamp())
         );
+
+        $asset['TimeInstant'] = $timeInstant;
 
         // Location
-        $location = isset($record->sensor->POINT_2_STREET) ? $record->sensor->POINT_2_STREET : '';
-        $attributes[] = array(
-          'name' => 'position',
-          'type' => 'coords',
-          'value' => $record->sensor->POINT_2_LAT . ',' . $record->sensor->POINT_2_LNG,
-          'metadata' => array(
-            array(
-              'name' => 'location',
-              'type' => 'string',
-              'value' => 'WGS84'
-            )
-          )
+        $asset['location'] = array(
+          'type' => 'geo:point',
+          'value' => $record->sensor->POINT_2_LNG . ", " . $record->sensor->POINT_2_LAT
         );
 
-        // Speed
-        $attributes[] = array(
-          'name' => 'speed:average',
+
+        //Speed
+        $asset['speed:average'] = array(
           'type' => 'urn:oc:attributeType:speed:average',
           'value' => strval($record->avgSpeed),
           'metadata' => array(
-            array(
-              'name' => 'unit',
+            'name' => array(
               'type' => 'urn:oc:dataType:string',
               'value' => 'urn:oc:uom:kilometrePerHour'
-            ),
-            array(
-              'name' => 'description',
-              'type' => 'urn:oc:dataType:string',
-              // @TODO: Add proper description for how data i measured
-              'value' => '@TODO'
             )
           )
         );
-
-        // Datasource
-        $attributes[] = array(
-          'name' => 'datasource',
-          'type' => 'urn:oc:attributeType:datasource',
-          'value' => 'https://www.odaa.dk/dataset/realtids-trafikdata',
-          'metadata' => array(
-            array(
-              'name' => 'datasourceExternal',
-              'type' => 'urn:oc:dataType:boolean',
-              'value' => 'true'
-            )
-          )
-        );
-
-        // Reputation
-        $attributes[] = array(
-          'name' => 'reputation',
-          'type' => 'urn:oc:attributeType:reputation',
-          'value' => '-1',
-          'metadata' => array(
-            array(
-              'name' => 'description',
-              'type' => 'urn:oc:dataType:string',
-              'value' => 'The reputation scores vary from 0 to 1. -1 means that there is not scores already calculated'
-            )
-          )
-        );
-
-        // Origin
-        $attributes[] = array(
-          'name' => 'origin',
-          'type' => 'urn:oc:attributeType:origin',
-          'value' => 'ODAA'
-        );
-
-        $contextElement->attributes = $attributes;
-        $asset = new stdClass();
-        $asset->contextElements = array($contextElement);
-
-        $asset->updateAction = 'APPEND';
 
         $assets[] = $asset;
 

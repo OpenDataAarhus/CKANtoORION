@@ -33,9 +33,9 @@ class CreateJobsCommand extends ContainerAwareCommand
     // create your job
     $jobs[] = new Dokk1CountersJob();
     $jobs[] = new RealTimeTrafficJob();
-    $jobs[] = new FriluftslivFirepitsJob();
-    $jobs[] = new FriluftslivFitnessGymJob();
-    $jobs[] = new FriluftslivGearStationJob();
+//    $jobs[] = new FriluftslivFirepitsJob();
+//    $jobs[] = new FriluftslivFitnessGymJob();
+//    $jobs[] = new FriluftslivGearStationJob();
 
     foreach ($jobs as $job) {
       // enqueue your job

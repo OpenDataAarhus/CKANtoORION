@@ -50,6 +50,8 @@ class DefaultController extends Controller
     $feed = $this->get('app.feed_reader_factory')->getFeedReader('real_time_traffic');
     $assets = $feed->normalizeForOrganicity();
 
+    $feed->syncToOrganicity();
+
     $selection = array_slice($assets, 0, 5, true);
 
     return new JsonResponse($selection);
