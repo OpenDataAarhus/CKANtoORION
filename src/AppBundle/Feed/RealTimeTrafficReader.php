@@ -52,12 +52,10 @@ class RealTimeTrafficReader extends BaseFeedReader
         $time = DateTime::createFromFormat('Y-m-d\TH:i:s', $record->TIMESTAMP);
         $time->setTimezone(new DateTimeZone('Europe/Copenhagen'));
 
-        $timeInstant = array(
+        $asset['TimeInstant'] = array(
           'type' => 'urn:oc:attributeType:ISO8601',
           'value' => gmdate('Y-m-d\TH:i:s.000\Z', $time->getTimestamp())
         );
-
-        $asset['TimeInstant'] = $timeInstant;
 
         // Location
         $asset['location'] = array(
