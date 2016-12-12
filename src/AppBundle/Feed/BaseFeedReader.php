@@ -135,7 +135,7 @@ abstract class BaseFeedReader
         throw new Exception('JSON Decode Error: ' . json_last_error_msg() );
       }
 
-      return $content->features;
+      return array('features' => $content->features, 'Last-Modified' => $response->getHeader('Last-Modified')[0]);
     }
 
     throw new Exception('$url cannot be empty');
