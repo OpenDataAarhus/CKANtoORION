@@ -19,111 +19,56 @@ class FriluftslivFitnessGymReader extends BaseFeedReader
 
   public function normalizeForOrganicity()
   {
-    $sensors_array = $this->getGeoData(self::FEED_PATH);
+    $odaa_data = $this->getGeoData(self::FEED_PATH);
+    $sensors_array = $odaa_data['features'];
+    $last_modified = $odaa_data['Last-Modified'];
+    $last_modified_timestamp = strtotime($last_modified);
 
     $assets = array();
 
     foreach ($sensors_array as $record) {
 
-      $contextElement = new stdClass();
-      $entityId = 'urn:oc:entity:aarhus:friluftsliv:fitness:' . md5($record->properties->Navn);
-      $contextElement->id = $entityId;
+      $asset = array(
+        'id' => 'urn:oc:entity:aarhus:friluftsliv:fitness:' . md5($record->properties->Navn),
+        'type' => 'urn:oc:entityType:fitnessspot',
 
-      $contextElement->isPattern = 'false';
-      $contextElement->type = 'urn:oc:entityType:fitness';
-
-      // attributes
-      $attributes = array();
-
-      // Time
-      $time = new DateTime();
-      //2016-06-28T09:05:00
-      $time->setTimezone(new DateTimeZone('Europe/Copenhagen'));
-
-      $timeinstant = gmdate('Y-m-d\TH:i:s.000\Z', $time->getTimestamp());
-      $attributes[] = array(
-        'name' => 'TimeInstant',
-        'type' => 'ISO8601',
-        'value' => $timeinstant
-      );
-
-      // Booking
-      $bookable = $record->properties->Bookbar === 'Ja' ? 'true' : 'false';
-      $attributes[] = array(
-        'name' => 'bookable',
-        'value' => $bookable,
-        'metadata' => array(
-          array(
-            'name' => 'unit',
-            'type' => 'urn:oc:dataType:string',
-            'value' => 'urn:oc:uom:boolean'
+        'origin' => array(
+          'type' => 'urn:oc:attributeType:origin',
+          'value' => 'Public Firepits from Friluftliv Aarhus',
+          'metadata' => array(
+            'urls' => array(
+              'type' => 'urls',
+              'value' => 'https://www.odaa.dk/dataset/balpladser-i-aarhus'
+            )
           )
         )
       );
 
-      // Description
-      $attributes[] = array(
-        'name' => 'name',
-        'value' => $record->properties->Navn,
+      // Time
+      $asset['TimeInstant'] = array(
+        'type' => 'urn:oc:attributeType:ISO8601',
+        'value' => gmdate('Y-m-d\TH:i:s.000\Z', $last_modified_timestamp)
+      );
+
+      // Booking
+      $asset['bookable'] = array(
+        'type' => 'urn:oc:datatype:boolean',
+        'value' => $record->properties->Bookbar === 'Ja' ? 'true' : 'false'
+      );
+
+      // Name
+      $asset['name'] = array(
+        'type' => 'urn:oc:attributeType:name',
+        'value' => $record->properties->Navn
       );
 
       // Location
       $point_LAT = $record->geometry->coordinates[1];
       $point_LNG = $record->geometry->coordinates[0];
-      $attributes[] = array(
-        'name' => 'position',
-        'type' => 'coords',
-        'value' => $point_LAT . ',' . $point_LNG,
-        'metadata' => array(
-          array(
-            'name' => 'location',
-            'type' => 'string',
-            'value' => 'WGS84'
-          )
-        )
+      $asset['location'] = array(
+        'type' => 'geo:point',
+        'value' => $point_LNG . ', ' . $point_LAT
       );
-
-      // Datasource
-      $attributes[] = array(
-        'name' => 'datasource',
-        'type' => 'urn:oc:attributeType:datasource',
-        'value' => 'https://www.odaa.dk/dataset/fitness-i-det-fri-aarhus',
-        'metadata' => array(
-          array(
-            'name' => 'datasourceExternal',
-            'type' => 'urn:oc:dataType:boolean',
-            'value' => 'true'
-          )
-        )
-      );
-
-      // Reputation
-      $attributes[] = array(
-        'name' => 'reputation',
-        'type' => 'urn:oc:attributeType:reputation',
-        'value' => '-1',
-        'metadata' => array(
-          array(
-            'name' => 'description',
-            'type' => 'urn:oc:dataType:string',
-            'value' => 'The reputation scores vary from 0 to 1. -1 means that there is not scores already calculated'
-          )
-        )
-      );
-
-      // Origin
-      $attributes[] = array(
-        'name' => 'origin',
-        'type' => 'urn:oc:attributeType:origin',
-        'value' => 'ODAA'
-      );
-
-      $contextElement->attributes = $attributes;
-      $asset = new stdClass();
-      $asset->contextElements = array($contextElement);
-
-
-      $asset->updateAction = 'APPEND';
 
       $assets[] = $asset;
 
