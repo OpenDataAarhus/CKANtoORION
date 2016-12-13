@@ -98,6 +98,60 @@ class DefaultController extends Controller
   }
 
   /**
+   * @Route("/friluftsliv_treeclimbing", name="friluftsliv_treeclimbing")
+   * @Method("GET")
+   */
+  public function friluftslivTreeClimbingAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
+   * @Route("/friluftsliv_beacharea", name="friluftsliv_beacharea")
+   * @Method("GET")
+   */
+  public function friluftslivBeachAreaAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
+   * @Route("/friluftsliv_dagwalkingarea", name="friluftsliv_dagwalkingarea")
+   * @Method("GET")
+   */
+  public function friluftslivDogWalkingAreaAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
+   * @Route("/friluftsliv_parks", name="friluftsliv_parks")
+   * @Method("GET")
+   */
+  public function friluftslivParkAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
+   * @Route("/friluftsliv_forests", name="friluftsliv_forests")
+   * @Method("GET")
+   */
+  public function friluftslivForestAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
+   * @Route("/friluftsliv_forests_small", name="friluftsliv_forests_small")
+   * @Method("GET")
+   */
+  public function friluftslivForestSmallAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
    * @Route("/routes", name="routes")
    * @Method("GET")
    * @Template("routes.html.twig")

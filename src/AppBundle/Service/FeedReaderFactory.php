@@ -2,13 +2,19 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Feed\FriluftslivBeachAreaReader;
+use AppBundle\Feed\FriluftslivDogWalkingAreaReader;
 use AppBundle\Feed\FriluftslivFirepitsReader;
+use AppBundle\Feed\FriluftslivForestReader;
+use AppBundle\Feed\FriluftslivForestSmallReader;
 use AppBundle\Feed\FriluftslivGearStationReader;
 use AppBundle\Feed\FriluftslivFitnessGymReader;
 use AppBundle\Feed\FriluftslivKioskReader;
 use AppBundle\Feed\FriluftslivNaturCenterReader;
+use AppBundle\Feed\FriluftslivParksReader;
 use AppBundle\Feed\FriluftslivShelterReader;
 use AppBundle\Feed\FriluftslivToiletReader;
+use AppBundle\Feed\FriluftslivTreeClimbingReader;
 use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
@@ -62,6 +68,30 @@ class FeedReaderFactory
 
       case 'friluftsliv_toilet':
         return new FriluftslivToiletReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_treeclimbing':
+        return new FriluftslivTreeClimbingReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_beacharea':
+        return new FriluftslivBeachAreaReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_dagwalkingarea':
+        return new FriluftslivDogWalkingAreaReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_parks':
+        return new FriluftslivParksReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_forests':
+        return new FriluftslivForestReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_forests_small':
+        return new FriluftslivForestSmallReader($this->odaaClient, $this->orionUpdater);
         break;
 
       default:
