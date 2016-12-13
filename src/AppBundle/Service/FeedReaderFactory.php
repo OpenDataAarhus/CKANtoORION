@@ -5,7 +5,10 @@ namespace AppBundle\Service;
 use AppBundle\Feed\FriluftslivFirepitsReader;
 use AppBundle\Feed\FriluftslivGearStationReader;
 use AppBundle\Feed\FriluftslivFitnessGymReader;
+use AppBundle\Feed\FriluftslivKioskReader;
+use AppBundle\Feed\FriluftslivNaturCenterReader;
 use AppBundle\Feed\FriluftslivShelterReader;
+use AppBundle\Feed\FriluftslivToiletReader;
 use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
@@ -47,6 +50,18 @@ class FeedReaderFactory
 
       case 'friluftsliv_shelter':
         return new FriluftslivShelterReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_naturecenter':
+        return new FriluftslivNaturCenterReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_kiosk':
+        return new FriluftslivKioskReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_toilet':
+        return new FriluftslivToiletReader($this->odaaClient, $this->orionUpdater);
         break;
 
       default:

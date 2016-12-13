@@ -26,35 +26,21 @@ class DefaultController extends Controller
   }
 
   /**
-   * @Route("/dokk1counters", name="dokk1counters")
+   * @Route("/dokk1counters", name="dokk1_counters")
    * @Method("GET")
    */
   public function dokk1CountersAction(Request $request)
   {
-    $feed = $this->get('app.feed_reader_factory')->getFeedReader('dokk1_counters');
-    $assets = $feed->normalizeForOrganicity();
-
-    $feed->syncToOrganicity();
-
-    $selection = array_slice($assets, 0, 5, true);
-
-    return new JsonResponse($selection);
+    return $this->baseFeedReaderAction($request);
   }
 
   /**
-   * @Route("/realtimetraffic", name="realtimetraffic")
+   * @Route("/realtimetraffic", name="real_time_traffic")
    * @Method("GET")
    */
   public function realTimeTrafficAction(Request $request)
   {
-    $feed = $this->get('app.feed_reader_factory')->getFeedReader('real_time_traffic');
-    $assets = $feed->normalizeForOrganicity();
-
-    $feed->syncToOrganicity();
-
-    $selection = array_slice($assets, 0, 5, true);
-
-    return new JsonResponse($selection);
+    return $this->baseFeedReaderAction($request);
   }
 
   /**
@@ -63,12 +49,7 @@ class DefaultController extends Controller
    */
   public function friluftslivFirepitsAction(Request $request)
   {
-    $feed = $this->get('app.feed_reader_factory')->getFeedReader('friluftsliv_firepits');
-    $assets = $feed->normalizeForOrganicity();
-
-    $selection = array_slice($assets, 0, 5, true);
-
-    return new JsonResponse($selection);
+    return $this->baseFeedReaderAction($request);
   }
 
   /**
@@ -77,12 +58,7 @@ class DefaultController extends Controller
    */
   public function friluftslivFitnessGymAction(Request $request)
   {
-    $feed = $this->get('app.feed_reader_factory')->getFeedReader('friluftsliv_fitness');
-    $assets = $feed->normalizeForOrganicity();
-
-    $selection = array_slice($assets, 0, 5, true);
-
-    return new JsonResponse($selection);
+    return $this->baseFeedReaderAction($request);
   }
 
   /**
@@ -91,12 +67,7 @@ class DefaultController extends Controller
    */
   public function friluftslivGearStationAction(Request $request)
   {
-    $feed = $this->get('app.feed_reader_factory')->getFeedReader('friluftsliv_gearstation');
-    $assets = $feed->normalizeForOrganicity();
-
-    $selection = array_slice($assets, 0, 5, true);
-
-    return new JsonResponse($selection);
+    return $this->baseFeedReaderAction($request);
   }
 
   /**
@@ -105,12 +76,25 @@ class DefaultController extends Controller
    */
   public function friluftslivShelterAction(Request $request)
   {
-    $feed = $this->get('app.feed_reader_factory')->getFeedReader('friluftsliv_shelter');
-    $assets = $feed->normalizeForOrganicity();
+    return $this->baseFeedReaderAction($request);
+  }
 
-    $selection = array_slice($assets, 0, 5, true);
+  /**
+   * @Route("/friluftsliv_naturecenter", name="friluftsliv_naturecenter")
+   * @Method("GET")
+   */
+  public function friluftslivNaturecenterAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
 
-    return new JsonResponse($selection);
+  /**
+   * @Route("/friluftsliv_toilet", name="friluftsliv_toilet")
+   * @Method("GET")
+   */
+  public function friluftslivToiletAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
   }
 
   /**
@@ -133,6 +117,17 @@ class DefaultController extends Controller
     return [
       'routes' => $routes
     ];
+  }
+
+
+  private function baseFeedReaderAction(Request $request) {
+    $routeName = $request->get('_route');
+    $feed = $this->get('app.feed_reader_factory')->getFeedReader($routeName);
+    $assets = $feed->normalizeForOrganicity();
+
+    $selection = array_slice($assets, 0, 5, true);
+
+    return new JsonResponse($selection);
   }
 
 
