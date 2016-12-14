@@ -13,7 +13,7 @@ use DateTime;
 use DateTimeZone;
 use stdClass;
 
-class FriluftslivForestReader extends BaseFriluftslivPolygonReader
+class FriluftslivForestReader extends BaseFriluftslivGeoJsonReader
 {
   protected $feed_path = '/dataset/d19833aa-7efc-4461-ad4e-43fecefc573f/resource/e4bd8fe0-8cb8-4756-ba4c-d7edbf944917/download/SkoveStoreWGS84.json';
 

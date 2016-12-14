@@ -13,7 +13,7 @@ use DateTime;
 use DateTimeZone;
 use stdClass;
 
-class FriluftslivBeachAreaReader extends BaseFriluftslivPolygonReader
+class FriluftslivBeachAreaReader extends BaseFriluftslivGeoJsonReader
 {
   protected $feed_path = '/dataset/f93c5e24-6a6c-4a6e-9a95-d680b0fd7354/resource/bd4ef357-d6bb-4be9-ac06-60548f1acde6/download/NaturarealervedStrandenWGS84.json';
 

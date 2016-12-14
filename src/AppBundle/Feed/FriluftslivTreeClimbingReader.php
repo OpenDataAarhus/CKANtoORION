@@ -13,7 +13,7 @@ use DateTime;
 use DateTimeZone;
 use stdClass;
 
-class FriluftslivTreeClimbingReader extends BaseFriluftslivPolygonReader
+class FriluftslivTreeClimbingReader extends BaseFriluftslivGeoJsonReader
 {
   protected $feed_path = '/dataset/3f319888-a952-40d9-9ce6-c9ab2b9a0e3a/resource/0c6930f7-c291-408a-8049-839f09659b4e/download/TraeklatringWGS84.json';
 

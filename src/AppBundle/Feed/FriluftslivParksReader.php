@@ -13,7 +13,7 @@ use DateTime;
 use DateTimeZone;
 use stdClass;
 
-class FriluftslivParksReader extends BaseFriluftslivPolygonReader
+class FriluftslivParksReader extends BaseFriluftslivGeoJsonReader
 {
   protected $feed_path = '/dataset/d19833aa-7efc-4461-ad4e-43fecefc573f/resource/7c5436c3-240b-4d1e-bca0-3a0b76c6f4fa/download/ParkerWGS84.json';
 
