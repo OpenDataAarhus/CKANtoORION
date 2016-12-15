@@ -10,10 +10,6 @@ class RealTimeTrafficJob extends ContainerAwareJob
 
   public function run($args)
   {
-    // get resque
-    $resque = $this->getContainer()->get('resque');
-    $resque->enqueueIn(self::INTERVAL, $this);
-
     $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('real_time_traffic');
     $feed->syncToOrganicity();
   }

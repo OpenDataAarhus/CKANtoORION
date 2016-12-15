@@ -10,12 +10,7 @@ class FriluftslivShelterJob extends ContainerAwareJob
 
   public function run($args)
   {
-    // get resque
-    $resque = $this->getContainer()->get('resque');
-
     $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('friluftsliv_shelter');
     $feed->syncToOrganicity();
-
-    $resque->enqueueIn(self::INTERVAL, $this);
   }
 }
