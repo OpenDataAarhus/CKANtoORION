@@ -9,9 +9,13 @@ use AppBundle\Feed\FriluftslivForestReader;
 use AppBundle\Feed\FriluftslivForestSmallReader;
 use AppBundle\Feed\FriluftslivGearStationReader;
 use AppBundle\Feed\FriluftslivFitnessGymReader;
+use AppBundle\Feed\FriluftslivHikingTrailsReader;
+use AppBundle\Feed\FriluftslivHorseRidingTrailsReader;
 use AppBundle\Feed\FriluftslivKioskReader;
+use AppBundle\Feed\FriluftslivMountainBikeTrailsReader;
 use AppBundle\Feed\FriluftslivNaturCenterReader;
 use AppBundle\Feed\FriluftslivParksReader;
+use AppBundle\Feed\FriluftslivRunningTrailsReader;
 use AppBundle\Feed\FriluftslivShelterReader;
 use AppBundle\Feed\FriluftslivToiletReader;
 use AppBundle\Feed\FriluftslivTreeClimbingReader;
@@ -92,6 +96,22 @@ class FeedReaderFactory
 
       case 'friluftsliv_forests_small':
         return new FriluftslivForestSmallReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_hikingtrails':
+        return new FriluftslivHikingTrailsReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_mountainbiketrails':
+        return new FriluftslivMountainBikeTrailsReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_runningtrails':
+        return new FriluftslivRunningTrailsReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'friluftsliv_horseridingtrails':
+        return new FriluftslivHorseRidingTrailsReader($this->odaaClient, $this->orionUpdater);
         break;
 
       default:
