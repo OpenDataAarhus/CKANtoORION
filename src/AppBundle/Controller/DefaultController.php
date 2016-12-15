@@ -152,6 +152,42 @@ class DefaultController extends Controller
   }
 
   /**
+   * @Route("/friluftsliv_hikingtrails", name="friluftsliv_hikingtrails")
+   * @Method("GET")
+   */
+  public function friluftslivHikingTrailsAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
+   * @Route("/friluftsliv_mountainbiketrails", name="friluftsliv_mountainbiketrails")
+   * @Method("GET")
+   */
+  public function friluftslivMountainBikeTrailsAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
+   * @Route("/friluftsliv_runningtrails", name="friluftsliv_runningtrails")
+   * @Method("GET")
+   */
+  public function friluftslivRunnningTrailsAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
+   * @Route("/friluftsliv_horseridingtrails", name="friluftsliv_horseridingtrails")
+   * @Method("GET")
+   */
+  public function friluftslivHorseRidingTrailsAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
    * @Route("/routes", name="routes")
    * @Method("GET")
    * @Template("routes.html.twig")
