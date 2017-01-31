@@ -2,16 +2,11 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Job\FriluftslivGearStationJob;
-use AppBundle\Job\FriluftslivFirepitsJob;
-use AppBundle\Job\Dokk1CountersJob;
-use AppBundle\Job\FriluftslivFitnessGymJob;
-use AppBundle\Job\RealTimeTrafficJob;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ClearJobQueuesCommand extends ContainerAwareCommand
+class JobsDeleteCommand extends ContainerAwareCommand
 {
   protected function configure()
   {
@@ -30,5 +25,15 @@ class ClearJobQueuesCommand extends ContainerAwareCommand
     // get resque
     $resque = $this->getContainer()->get('resque');
     $resque->clearQueue('default');
+
+    $timestamps = $resque->getDelayedJobTimestamps();
+
+    foreach ($timestamps as $timestamp) {
+      $delayed = $resque->getJobsForTimestamp($timestamp[0]);
+      foreach ($delayed as $job) {
+        $resque->removedDelayed($job);
+      }
+    }
+
   }
 }

@@ -39,6 +39,9 @@ monolog:
 # Guzzle config/clients
 guzzle:
     clients:
+        orion_enity:
+            base_url: "http://192.168.50.108:1026/v2/entities"
+
         orion_batch:
             base_url: "http://192.168.50.108:1026/v2/op/update"
 

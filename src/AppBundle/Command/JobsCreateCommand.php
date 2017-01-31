@@ -27,7 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateJobsCommand extends ContainerAwareCommand
+class JobsCreateCommand extends ContainerAwareCommand
 {
   protected function configure()
   {
@@ -45,7 +45,7 @@ class CreateJobsCommand extends ContainerAwareCommand
   {
     // get resque
     $resque = $this->getContainer()->get('resque');
-    $resque->clearQueue('default');
+    $jobsService = $this->getContainer()->get('app.jobs_service');
 
     // create your job
     $jobs[] = new Dokk1CountersJob();
@@ -69,9 +69,13 @@ class CreateJobsCommand extends ContainerAwareCommand
     $jobs[] = new FriluftslivToiletJob();
     $jobs[] = new FriluftslivTreeClimbingJob();
 
+    $offset = 0;
     foreach ($jobs as $job) {
       // enqueue your job
-      $resque->enqueue($job);
+      if (!$jobsService->isAllreadyQueued($job)) {
+        $resque->enqueueIn($offset, $job);
+        $offset += 2;
+      }
     }
   }
 }

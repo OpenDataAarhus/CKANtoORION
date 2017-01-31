@@ -8,6 +8,9 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
+    app.orion.enity:
+      alias: guzzle.client.orion_enity
+
     app.orion.batch:
       alias: guzzle.client.orion_batch
 
@@ -20,3 +23,7 @@ services:
     app.feed_reader_factory:
       class: AppBundle\Service\FeedReaderFactory
       arguments: ["@app.odaa.fetch", "@app.orion.batch"]
+
+    app.jobs_service:
+      class: AppBundle\Service\JobsService
+      arguments: ["@resque"]

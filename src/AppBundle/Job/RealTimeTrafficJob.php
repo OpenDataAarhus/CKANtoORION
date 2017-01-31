@@ -4,12 +4,14 @@ namespace AppBundle\Job;
 
 use ResqueBundle\Resque\ContainerAwareJob;
 
-class RealTimeTrafficJob extends ContainerAwareJob
+class RealTimeTrafficJob extends BaseJob
 {
-  const INTERVAL = 5 * 60;
+  private $interval = 5 * 60;
 
   public function run($args)
   {
+    parent::run($args);
+
     $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('real_time_traffic');
     $feed->syncToOrganicity();
   }
