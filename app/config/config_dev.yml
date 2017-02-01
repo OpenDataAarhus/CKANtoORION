@@ -1,0 +1,49 @@
+imports:
+    - { resource: config.yml }
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/routing_dev.yml"
+        strict_requirements: true
+    profiler: { only_exceptions: false }
+    session:
+        # http://stackoverflow.com/questions/37707905/php7-symfony-3-1-0-vagrant-failed-to-write-session-data
+        save_path:   "/var/lib/php/sessions"
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+            channels: [!event]
+        console:
+            type:   console
+            channels: [!event, !doctrine]
+        # uncomment to get logging in your browser
+        # you may have to allow bigger header sizes in your Web server configuration
+        #firephp:
+        #    type:   firephp
+        #    level:  info
+        #chromephp:
+        #    type:   chromephp
+        #    level:  info
+
+#swiftmailer:
+#    delivery_address: me@example.com
+
+# Guzzle config/clients
+guzzle:
+    clients:
+        orion_enity:
+            base_url: "http://192.168.50.108:1026/v2/entities"
+
+        orion_batch:
+            base_url: "http://192.168.50.108:1026/v2/op/update"
+
+        orion_query:
+            base_url: "http://192.168.50.108:1026/v1/queryContext"

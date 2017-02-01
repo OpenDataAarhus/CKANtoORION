@@ -1,0 +1,9 @@
+<table>
+  {% for route in routes %}
+    <tr>
+      <td><a href="{{ route.path }}">{{ route.path }}</a></td>
+      <td>{{ route.methods|length > 0 ? route.methods|join(', ') : 'ANY' }}</td>
+      <td>{{ route.defaults._controller }}</td>
+    </tr>
+  {% endfor %}
+</table>

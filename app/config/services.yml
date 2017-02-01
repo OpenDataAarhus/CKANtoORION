@@ -1,0 +1,29 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
+    app.orion.enity:
+      alias: guzzle.client.orion_enity
+
+    app.orion.batch:
+      alias: guzzle.client.orion_batch
+
+    app.orion.query:
+      alias: guzzle.client.orion_query
+
+    app.odaa.fetch:
+      alias: guzzle.client.odaa
+
+    app.feed_reader_factory:
+      class: AppBundle\Service\FeedReaderFactory
+      arguments: ["@app.odaa.fetch", "@app.orion.batch"]
+
+    app.jobs_service:
+      class: AppBundle\Service\JobsService
+      arguments: ["@resque"]
