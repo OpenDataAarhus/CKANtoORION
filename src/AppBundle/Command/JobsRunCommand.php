@@ -11,6 +11,7 @@ use AppBundle\Job\FriluftslivForestSmallJob;
 use AppBundle\Job\FriluftslivGearStationJob;
 use AppBundle\Job\FriluftslivFirepitsJob;
 use AppBundle\Job\Dokk1CountersJob;
+use AppBundle\Job\Dokk1CountersJob2;
 use AppBundle\Job\FriluftslivFitnessGymJob;
 use AppBundle\Job\FriluftslivHikingTrailsJob;
 use AppBundle\Job\FriluftslivHorseRidingTrailsJob;
@@ -27,13 +28,13 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class JobsCreateCommand extends ContainerAwareCommand
+class JobsRunCommand extends ContainerAwareCommand
 {
   protected function configure()
   {
     $this
       // the name of the command (the part after "bin/console")
-      ->setName('app:jobs:create')
+      ->setName('app:jobs:run')
       // the short description shown while running "php bin/console list"
       ->setDescription('Creates feeds.')
       // the full command description shown when running the command with
@@ -48,43 +49,30 @@ class JobsCreateCommand extends ContainerAwareCommand
     $jobsService = $this->getContainer()->get('app.jobs_service');
 
     // create your job
-    $jobs[] = new Dokk1CountersJob();
-    $jobs[] = new RealTimeTrafficJob();
-
-    $jobs[] = new FriluftslivBeachAreaJob();
-    $jobs[] = new FriluftslivDogWalkingAreaJob();
-    $jobs[] = new FriluftslivFirepitsJob();
-    $jobs[] = new FriluftslivFitnessGymJob();
-    $jobs[] = new FriluftslivForestJob();
-    $jobs[] = new FriluftslivForestSmallJob();
-    $jobs[] = new FriluftslivGearStationJob();
-    $jobs[] = new FriluftslivHikingTrailsJob();
-    $jobs[] = new FriluftslivHorseRidingTrailsJob();
-    $jobs[] = new FriluftslivKioskJob();
-    $jobs[] = new FriluftslivMountainbikeTrailsJob();
-    $jobs[] = new FriluftslivNatureCenterJob();
-    $jobs[] = new FriluftslivParksJob();
-    $jobs[] = new FriluftslivRunningTrailsJob();
-    $jobs[] = new FriluftslivShelterJob();
-    $jobs[] = new FriluftslivToiletJob();
-    $jobs[] = new FriluftslivTreeClimbingJob();
-
-    $timeOffset = 0;
-    $created = 0;
-    $skipped = 0;
+    $jobs[] = new Dokk1CountersJob2();
+//    $jobs[] = new RealTimeTrafficJob();
+//
+//    $jobs[] = new FriluftslivBeachAreaJob();
+//    $jobs[] = new FriluftslivDogWalkingAreaJob();
+//    $jobs[] = new FriluftslivFirepitsJob();
+//    $jobs[] = new FriluftslivFitnessGymJob();
+//    $jobs[] = new FriluftslivForestJob();
+//    $jobs[] = new FriluftslivForestSmallJob();
+//    $jobs[] = new FriluftslivGearStationJob();
+//    $jobs[] = new FriluftslivHikingTrailsJob();
+//    $jobs[] = new FriluftslivHorseRidingTrailsJob();
+//    $jobs[] = new FriluftslivKioskJob();
+//    $jobs[] = new FriluftslivMountainbikeTrailsJob();
+//    $jobs[] = new FriluftslivNatureCenterJob();
+//    $jobs[] = new FriluftslivParksJob();
+//    $jobs[] = new FriluftslivRunningTrailsJob();
+//    $jobs[] = new FriluftslivShelterJob();
+//    $jobs[] = new FriluftslivToiletJob();
+//    $jobs[] = new FriluftslivTreeClimbingJob();
 
     foreach ($jobs as $job) {
-      // enqueue your job
-      if (!$jobsService->isAllreadyQueued($job)) {
-        $resque->enqueueIn($timeOffset, $job);
-        $timeOffset += 1;
-        $created++;
-      } else {
-        $skipped++;
-      }
+      $job->setFeed($this->getContainer()->get('app.feed_reader_factory')->getFeedReader('dokk1_counters'));
+      $job->run(array());
     }
-
-    $output->writeln('<info>'.$created.' jobs created</info>');
-    $output->writeln('<comment>'.$skipped.' jobs skipped - allready scheduled</comment>');
   }
 }

@@ -28,46 +28,6 @@ abstract class BaseFeedReader
 
   abstract public function normalizeForOrganicity();
 
-  public function syncToOrganicity()
-  {
-    $assets = $this->normalizeForOrganicity();
-
-    $this->batchAction($assets);
-  }
-
-  /**
-   * @param $assets
-   * @param $actionType APPEND or UPDATE
-   * @throws Exception
-   */
-
-  protected function batchAction($assets, $actionType = 'APPEND')
-  {
-    $client = $this->orionUpdater;
-    $body = array(
-      'actionType' => $actionType,
-      'entities' => $assets
-    );
-    $json = json_encode($body);
-
-    try {
-      $response = $client->post('', array(
-        'body' => $json
-      ));
-      $response->getBody()->rewind();
-      $content = json_decode($response->getBody()->getContents());
-    } catch (RequestException $e) {
-
-      if($e->getResponse()) {
-        $body = json_decode($e->getResponse()->getBody()->getContents());
-        $error = isset($body->error) ? $body->error : 'UNKNOWN';
-        $description = isset($body->description) ? $body->description : 'UNKNOWN';
-        throw new Exception("Orion Error: " . $e->getCode() . ', ' . $error . ', ' . $description);
-      } else {
-        throw $e;
-      }
-    }
-  }
 
   protected function getPagedData($next_url, $records = array())
   {

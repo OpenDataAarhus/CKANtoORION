@@ -6,13 +6,15 @@ use ResqueBundle\Resque\ContainerAwareJob;
 
 class FriluftslivMountainbikeTrailsJob extends BaseJob
 {
-  private $interval = 24 * 60 * 60;
+  protected $interval = 24 * 60 * 60;
 
   public function run($args)
   {
     parent::run($args);
 
     $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('friluftsliv_mountainbiketrails');
-    $feed->syncToOrganicity();
+    $assets = $feed->normalizeForOrganicity();
+
+    $this->spawnSingleJobs($assets);
   }
 }
