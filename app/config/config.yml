@@ -36,7 +36,7 @@ framework:
 guzzle:
     clients:
         orion_enity:
-            base_url: "http://orion.odaa.dk:1026/v2/entities"
+            base_url: "http://%orion_url%:1026/v2/entities"
 
             # custom headers
             headers:
@@ -45,7 +45,7 @@ guzzle:
                 Fiware-ServicePath: "/"
 
         orion_batch:
-            base_url: "http://orion.odaa.dk:1026/v2/op/update"
+            base_url: "http://%orion_url%:1026/v2/op/update"
 
             # custom headers
             headers:
@@ -55,7 +55,7 @@ guzzle:
                 Fiware-ServicePath: "/"
 
         orion_query:
-            base_url: "http://orion.odaa.dk:1026/v1/queryContext"
+            base_url: "http://%orion_url%:1026/v1/queryContext"
 
             # custom headers
             headers:
