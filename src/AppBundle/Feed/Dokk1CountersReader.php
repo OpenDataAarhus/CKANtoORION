@@ -81,7 +81,7 @@ class Dokk1CountersReader extends BaseFeedReader
         $dokk1_LNG = 10.213934;
         $asset['location'] = array(
           'type' => 'geo:point',
-          'value' => $dokk1_LNG . ", " . $dokk1_LAT
+          'value' => $dokk1_LAT . ", " . $dokk1_LNG
         );
 
         $assets[] = $asset;
