@@ -63,7 +63,7 @@ abstract class BaseFriluftslivPointReader extends BaseFeedReader
       $point_LNG = $record->geometry->coordinates[0];
       $asset['location'] = array(
         'type' => 'geo:point',
-        'value' => $point_LNG . ', ' . $point_LAT
+        'value' => $point_LAT . ', ' . $point_LNG
       );
 
       $assets[] = $asset;
