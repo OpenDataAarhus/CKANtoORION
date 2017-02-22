@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.9
+ * ORG-45: (hack) Notifications seems to skip every 5. Shuffle to ensure diff order each time
+
 ## 1.0.8
  * ORG-45: Changed/slowed throttling to batchjob to test if it prevents subscription problems between Orion's
  
