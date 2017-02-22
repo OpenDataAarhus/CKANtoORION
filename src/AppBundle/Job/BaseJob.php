@@ -35,7 +35,17 @@ class BaseJob extends ContainerAwareJob
 
   // @TODO Test to see if it's the batch job that cause problems with subscription updates
   protected function spawnBatchJob($assets) {
-    $this->spawnSingleJobs($assets);
+    $seconds = 1;
+    $count = 0;
+    foreach ($assets as $asset) {
+      $syncJob = new SyncJob();
+      $syncJob->args = array(
+        'assets' => array($asset)
+      );
+
+      $this->resque->enqueueIn($seconds, $syncJob);
+      $seconds = ($count % 3 == 0) ? $seconds + 1 : $seconds;
+    }
   }
 
 //  protected function spawnBatchJob($assets) {
