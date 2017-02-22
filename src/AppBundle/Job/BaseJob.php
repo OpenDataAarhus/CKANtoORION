@@ -35,7 +35,7 @@ class BaseJob extends ContainerAwareJob
 
   // @TODO Test to see if it's the batch job that cause problems with subscription updates
   protected function spawnBatchJob($assets) {
-    $this->spawnSingleJobs();
+    $this->spawnSingleJobs($assets);
   }
 
 //  protected function spawnBatchJob($assets) {

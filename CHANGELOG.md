@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.6
+ * ORG-45: Fixed missing parameter  
+
 ## 1.0.5
  * ORG-45: Tried to disable batch sync to test if it prevents subscription problems between Orion's 
 
