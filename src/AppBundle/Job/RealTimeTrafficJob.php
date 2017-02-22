@@ -2,11 +2,9 @@
 
 namespace AppBundle\Job;
 
-use ResqueBundle\Resque\ContainerAwareJob;
-
 class RealTimeTrafficJob extends BaseJob
 {
-  protected $interval = 5 * 60;
+  protected $interval = 10 * 60;
 
   public function run($args)
   {
