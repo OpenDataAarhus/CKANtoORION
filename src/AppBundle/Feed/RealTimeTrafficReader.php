@@ -60,7 +60,7 @@ class RealTimeTrafficReader extends BaseFeedReader
         // Location
         $asset['location'] = array(
           'type' => 'geo:point',
-          'value' => $record->sensor->POINT_2_LAT . ", " . $record->sensor->POINT_2_LON
+          'value' => $record->sensor->POINT_2_LAT . ", " . $record->sensor->POINT_2_LNG
         );
 
 
