@@ -36,6 +36,11 @@ class BaseJob extends ContainerAwareJob
   // @TODO Test to see if it's the batch job that cause problems with subscription updates
   protected function spawnBatchJob($assets) {
     $seconds = 1;
+    $count = 0;
+
+    // @TODO / Hack: Notifications seems to skip every 5. Shuffle to ensure diff order each time
+    ksort($assets);
+
     foreach ($assets as $asset) {
       $syncJob = new SyncJob();
       $syncJob->args = array(
@@ -43,7 +48,7 @@ class BaseJob extends ContainerAwareJob
       );
 
       $this->resque->enqueueIn($seconds, $syncJob);
-      $seconds++;
+      $seconds = ($count % 3 == 0) ? $seconds + 1 : $seconds;
     }
   }
 
