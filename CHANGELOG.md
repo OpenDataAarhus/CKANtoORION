@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.8
+ * ORG-45: Changed/slowed throttling to batchjob to test if it prevents subscription problems between Orion's
+ 
 ## 1.0.7
  * ORG-45: Added throttling to batchjob to test if it prevents subscription problems between Orion's
 
