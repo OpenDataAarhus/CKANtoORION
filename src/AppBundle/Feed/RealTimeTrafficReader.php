@@ -76,12 +76,14 @@ class RealTimeTrafficReader extends BaseFeedReader
           )
         );
 
-        $assets[] = $asset;
+        $assets[$record->_id] = $asset;
 
       } else {
         die('Unmapped sensor');
       }
     }
+    
+    ksort($assets);
 
     return $assets;
   }
