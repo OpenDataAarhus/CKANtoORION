@@ -19,6 +19,7 @@ use AppBundle\Feed\FriluftslivRunningTrailsReader;
 use AppBundle\Feed\FriluftslivShelterReader;
 use AppBundle\Feed\FriluftslivToiletReader;
 use AppBundle\Feed\FriluftslivTreeClimbingReader;
+use AppBundle\Feed\DetskeriaarhusReader;
 use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
@@ -28,11 +29,13 @@ class FeedReaderFactory
 {
   private $odaaClient;
   private $orionUpdater;
+  private $detskeriaarhusClient;
 
-  public function __construct(Client $odaaClient, Client $orionUpdater)
+  public function __construct(Client $odaaClient, Client $orionUpdater, Client $detskeriaarhusClient)
   {
     $this->odaaClient = $odaaClient;
     $this->orionUpdater = $orionUpdater;
+    $this->detskeriaarhusClient = $detskeriaarhusClient;
   }
 
   public function getFeedReader(string $identifier) {
@@ -112,6 +115,10 @@ class FeedReaderFactory
 
       case 'friluftsliv_horseridingtrails':
         return new FriluftslivHorseRidingTrailsReader($this->odaaClient, $this->orionUpdater);
+        break;
+
+      case 'detskeriaarhus':
+        return new DetskeriaarhusReader($this->detskeriaarhusClient, $this->orionUpdater);
         break;
 
       default:

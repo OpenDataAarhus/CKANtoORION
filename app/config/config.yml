@@ -74,6 +74,15 @@ guzzle:
                 Content-Type: "application/json"
                 Accept: "application/json"
 
+        detskeriaarhus:
+            base_url: "http://api.detskeriaarhus.dk"
+            options:
+              timeout: 45
+
+            # custom headers
+            headers:
+                Accept: "application/ld+json"
+
 # Resque Jobs Retry strategy
 resque:
     auto_retry: []

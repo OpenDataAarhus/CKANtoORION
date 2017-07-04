@@ -188,6 +188,15 @@ class DefaultController extends Controller
   }
 
   /**
+   * @Route("/detskeriaarhus", name="detskeriaarhus")
+   * @Method("GET")
+   */
+  public function detskeriaarhusAction(Request $request)
+  {
+    return $this->baseFeedReaderAction($request);
+  }
+
+  /**
    * @Route("/routes", name="routes")
    * @Method("GET")
    * @Template("routes.html.twig")

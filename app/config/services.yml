@@ -20,9 +20,12 @@ services:
     app.odaa.fetch:
       alias: guzzle.client.odaa
 
+    app.detskeriaarhus.fetch:
+      alias: guzzle.client.detskeriaarhus
+
     app.feed_reader_factory:
       class: AppBundle\Service\FeedReaderFactory
-      arguments: ["@app.odaa.fetch", "@app.orion.batch"]
+      arguments: ["@app.odaa.fetch", "@app.orion.batch", "@app.detskeriaarhus.fetch"]
 
     app.jobs_service:
       class: AppBundle\Service\JobsService
