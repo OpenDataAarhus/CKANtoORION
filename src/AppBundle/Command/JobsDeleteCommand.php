@@ -26,14 +26,13 @@ class JobsDeleteCommand extends ContainerAwareCommand
     $resque = $this->getContainer()->get('resque');
     $resque->clearQueue('default');
 
-    $timestamps = $resque->getDelayedJobTimestamps();
 
+    // https://github.com/resquebundle/resque/issues/13
+    $timestamps = \Resque::redis()->zrange('delayed_queue_schedule', 0, -1);
     foreach ($timestamps as $timestamp) {
-      $delayed = $resque->getJobsForTimestamp($timestamp[0]);
-      foreach ($delayed as $job) {
-        $resque->removedDelayed($job);
-      }
+      \Resque::redis()->del('delayed:' . $timestamp);
     }
+    \Resque::redis()->del('delayed_queue_schedule');
 
   }
 }
