@@ -4,6 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Feed\FriluftslivBeachAreaReader;
 use AppBundle\Feed\FriluftslivDogWalkingAreaReader;
+use AppBundle\Job\DetSkerIAarhusJob;
 use AppBundle\Job\FriluftslivBeachAreaJob;
 use AppBundle\Job\FriluftslivDogWalkingAreaJob;
 use AppBundle\Job\FriluftslivForestJob;
@@ -50,6 +51,7 @@ class JobsCreateCommand extends ContainerAwareCommand
     // create your job
     $jobs[] = new Dokk1CountersJob();
     $jobs[] = new RealTimeTrafficJob();
+    $jobs[] = new DetSkerIAarhusJob();
 
     $jobs[] = new FriluftslivBeachAreaJob();
     $jobs[] = new FriluftslivDogWalkingAreaJob();

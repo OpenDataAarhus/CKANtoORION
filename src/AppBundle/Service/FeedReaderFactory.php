@@ -24,18 +24,21 @@ use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
 use AppBundle\Feed\Dokk1CountersReader;
+use Symfony\Component\Cache\Adapter\TraceableAdapter;
 
 class FeedReaderFactory
 {
   private $odaaClient;
   private $orionUpdater;
   private $detskeriaarhusClient;
+  private $adapter;
 
-  public function __construct(Client $odaaClient, Client $orionUpdater, Client $detskeriaarhusClient)
+  public function __construct(Client $odaaClient, Client $orionUpdater, Client $detskeriaarhusClient, TraceableAdapter $adapter)
   {
     $this->odaaClient = $odaaClient;
     $this->orionUpdater = $orionUpdater;
     $this->detskeriaarhusClient = $detskeriaarhusClient;
+    $this->adapter = $adapter;
   }
 
   public function getFeedReader(string $identifier) {
@@ -118,7 +121,7 @@ class FeedReaderFactory
         break;
 
       case 'detskeriaarhus':
-        return new DetskeriaarhusReader($this->detskeriaarhusClient, $this->orionUpdater);
+        return new DetskeriaarhusReader($this->detskeriaarhusClient, $this->orionUpdater, $this->adapter);
         break;
 
       default:

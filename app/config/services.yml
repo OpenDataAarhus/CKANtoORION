@@ -25,7 +25,7 @@ services:
 
     app.feed_reader_factory:
       class: AppBundle\Service\FeedReaderFactory
-      arguments: ["@app.odaa.fetch", "@app.orion.batch", "@app.detskeriaarhus.fetch"]
+      arguments: ["@app.odaa.fetch", "@app.orion.batch", "@app.detskeriaarhus.fetch", "@cache.app"]
 
     app.jobs_service:
       class: AppBundle\Service\JobsService

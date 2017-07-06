@@ -17,6 +17,8 @@ use GuzzleHttp\Promise;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use ForceUTF8\Encoding;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Component\Cache\Adapter\TraceableAdapter;
 
 class DetskeriaarhusReader
 {
@@ -24,11 +26,13 @@ class DetskeriaarhusReader
 
   private $detskeriaarhusClient;
   private $orionUpdater;
+  private $cache;
 
-  public function __construct(Client $detskeriaarhusClient, Client $orionUpdater)
+  public function __construct(Client $detskeriaarhusClient, Client $orionUpdater, TraceableAdapter $cache)
   {
     $this->detskeriaarhusClient = $detskeriaarhusClient;
     $this->orionUpdater = $orionUpdater;
+    $this->cache = $cache;
   }
 
   protected function getPagedData($next_url, $records = array())
@@ -70,7 +74,8 @@ class DetskeriaarhusReader
     throw new Exception('$next_url cannot be empty');
   }
 
-  private function getPlaceData($events) {
+  private function getPlaceData($events)
+  {
 
     $client = $this->detskeriaarhusClient;
     $places = array();
@@ -79,23 +84,36 @@ class DetskeriaarhusReader
       $occurences = $event->occurrences;
       $placeID = empty($occurences) ? null : $occurences[0]->place->{'@id'};
 
-      if($placeID && !array_key_exists($placeID, $places)) {
-        try {
-          $response = $client->get($placeID);
-        } catch (RequestException $e) {
-          echo Psr7\str($e->getRequest());
-          if ($e->hasResponse()) {
-            echo Psr7\str($e->getResponse());
+      if ($placeID && !array_key_exists($placeID, $places)) {
+
+        $placeCache = $this->cache->getItem('detskeriaarhus_place' . str_replace('/', '_', $placeID));
+        if (!$placeCache->isHit()) {
+
+          try {
+            $response = $client->get($placeID);
+          } catch (RequestException $e) {
+            echo Psr7\str($e->getRequest());
+            if ($e->hasResponse()) {
+              echo Psr7\str($e->getResponse());
+            }
+            throw new Exception('Network Error retrieving: ' . $placeID);
           }
-          throw new Exception('Network Error retrieving: ' . $placeID);
+
+          // https://github.com/8p/GuzzleBundle/issues/48
+          $response->getBody()->rewind();
+          $content = $response->getBody()->getContents();
+          $decoded = json_decode($content);
+
+          $places[$placeID] = $decoded;
+
+          $placeCache->set($decoded);
+          $placeCache->expiresAfter(24 * 60 * 60);
+          $this->cache->save($placeCache);
+
+        } else {
+          $decoded = $placeCache->get();
+          $places[$placeID] = $decoded;
         }
-
-        // https://github.com/8p/GuzzleBundle/issues/48
-        $response->getBody()->rewind();
-        $content = $response->getBody()->getContents();
-        $decoded = json_decode($content);
-
-        $places[$placeID] = $decoded;
 
       }
     }
@@ -105,7 +123,19 @@ class DetskeriaarhusReader
 
   public function normalizeForOrganicity()
   {
-    $events_array = $this->getPagedData(self::FEED_PATH);
+    $lastSyncCache = $this->cache->getItem('detskeriaarhus_lastSync');
+    if (!$lastSyncCache->isHit()) {
+      $next_url = self::FEED_PATH;
+    } else {
+      $lastSync = $lastSyncCache->get();
+      $next_url = self::FEED_PATH . '?updatedAt[after]=' . urlencode($lastSync);
+    }
+
+    $lastSync = gmdate('Y-m-d\TH:i:sP');
+    $lastSyncCache->set($lastSync);
+    $this->cache->save($lastSyncCache);
+
+    $events_array = $this->getPagedData($next_url);
     $places_array = $this->getPlaceData($events_array);
     $assets = array();
 
@@ -113,7 +143,7 @@ class DetskeriaarhusReader
 
       $count = count($record->occurrences);
 
-      if($count > 0) {
+      if ($count > 0) {
 
         $pathinfo = pathinfo($record->{'@id'});
         $id = $pathinfo['basename'];
