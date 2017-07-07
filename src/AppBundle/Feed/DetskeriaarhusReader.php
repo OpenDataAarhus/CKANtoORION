@@ -177,10 +177,11 @@ class DetskeriaarhusReader
           'value' => $record->excerpt
         );
 
-        $asset['description'] = array(
-          'type' => 'urn:oc:attributeType:description',
-          'value' => $record->description
-        );
+        // @TODO Orion doesn't accept html so field excluded
+//        $asset['description'] = array(
+//          'type' => 'urn:oc:attributeType:description',
+//          'value' => $record->description
+//        );
 
         // Time
         $startTime = strtotime($first->startDate);
