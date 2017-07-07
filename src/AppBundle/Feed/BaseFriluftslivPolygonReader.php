@@ -77,6 +77,9 @@ abstract class BaseFriluftslivPolygonReader extends BaseFeedReader
         $assets[] = $asset;
 
       }
+
+      $lastSyncCache->set($last_modified_timestamp);
+      $this->cache->save($lastSyncCache);
     }
 
     return $assets;
