@@ -48,17 +48,8 @@ class BaseJob extends ContainerAwareJob
       );
 
       $this->resque->enqueueIn($seconds, $syncJob);
-      $seconds = ($count % 3 == 0) ? $seconds + 1 : $seconds;
+      $seconds++;
     }
   }
-
-//  protected function spawnBatchJob($assets) {
-//    $syncJob = new SyncJob();
-//    $syncJob->args = array(
-//      'assets'    => $assets
-//    );
-//
-//    $this->resque->enqueue($syncJob);
-//  }
 
 }
