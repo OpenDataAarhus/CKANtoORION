@@ -201,13 +201,14 @@ class DetskeriaarhusReader
           $list[] = array('startDate' => $occurrence->startDate, 'endDate' => $occurrence->endDate);
         }
 
-        $asset['occurences'] = array(
-          'type' => 'urn:oc:attributeType:count',
-          'value' => $count,
-          'metadata' => array(
-            'list' => $list
-          )
-        );
+        // @TODO Orion doesn't accept the metadata list so field excluded
+//        $asset['occurences'] = array(
+//          'type' => 'urn:oc:attributeType:count',
+//          'value' => $count,
+//          'metadata' => array(
+//            'list' => $list
+//          )
+//        );
 
         $asset['organizer'] = array(
           'type' => 'urn:oc:attributeType:organizer',
