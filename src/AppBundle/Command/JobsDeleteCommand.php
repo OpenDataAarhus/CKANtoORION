@@ -34,5 +34,8 @@ class JobsDeleteCommand extends ContainerAwareCommand
     }
     \Resque::redis()->del('delayed_queue_schedule');
 
+    // Clear failed queue
+    \Resque::redis()->del('failed');
+
   }
 }
