@@ -4,7 +4,7 @@ namespace AppBundle\Job;
 
 class RealTimeTrafficJob extends BaseJob
 {
-  protected $interval = 15 * 60;
+  protected $interval = 10 * 60;
 
   public function run($args)
   {
