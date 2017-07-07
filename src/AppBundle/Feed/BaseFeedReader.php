@@ -14,16 +14,19 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use Exception;
 use ForceUTF8\Encoding;
+use Symfony\Component\Cache\Adapter\TraceableAdapter;
 
 abstract class BaseFeedReader
 {
   private $odaaClient;
   private $orionUpdater;
+  protected $cache;
 
-  public function __construct(Client $odaaClient, Client $orionUpdater)
+  public function __construct(Client $odaaClient, Client $orionUpdater, TraceableAdapter $cache)
   {
     $this->odaaClient = $odaaClient;
     $this->orionUpdater = $orionUpdater;
+    $this->cache = $cache;
   }
 
   abstract public function normalizeForOrganicity();

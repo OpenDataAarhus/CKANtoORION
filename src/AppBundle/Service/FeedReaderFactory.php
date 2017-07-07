@@ -45,79 +45,79 @@ class FeedReaderFactory
 
     switch ($identifier) {
       case 'dokk1_counters':
-        return new Dokk1CountersReader($this->odaaClient, $this->orionUpdater);
+        return new Dokk1CountersReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'real_time_traffic':
-        return new RealTimeTrafficReader($this->odaaClient, $this->orionUpdater);
+        return new RealTimeTrafficReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_firepits':
-        return new FriluftslivFirepitsReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivFirepitsReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_fitness':
-        return new FriluftslivFitnessGymReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivFitnessGymReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_gearstation':
-        return new FriluftslivGearStationReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivGearStationReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_shelter':
-        return new FriluftslivShelterReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivShelterReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_naturecenter':
-        return new FriluftslivNaturCenterReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivNaturCenterReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_kiosk':
-        return new FriluftslivKioskReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivKioskReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_toilet':
-        return new FriluftslivToiletReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivToiletReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_treeclimbing':
-        return new FriluftslivTreeClimbingReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivTreeClimbingReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_beacharea':
-        return new FriluftslivBeachAreaReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivBeachAreaReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_dagwalkingarea':
-        return new FriluftslivDogWalkingAreaReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivDogWalkingAreaReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_parks':
-        return new FriluftslivParksReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivParksReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_forests':
-        return new FriluftslivForestReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivForestReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_forests_small':
-        return new FriluftslivForestSmallReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivForestSmallReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_hikingtrails':
-        return new FriluftslivHikingTrailsReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivHikingTrailsReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_mountainbiketrails':
-        return new FriluftslivMountainBikeTrailsReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivMountainBikeTrailsReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_runningtrails':
-        return new FriluftslivRunningTrailsReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivRunningTrailsReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'friluftsliv_horseridingtrails':
-        return new FriluftslivHorseRidingTrailsReader($this->odaaClient, $this->orionUpdater);
+        return new FriluftslivHorseRidingTrailsReader($this->odaaClient, $this->orionUpdater, $this->adapter);
         break;
 
       case 'detskeriaarhus':

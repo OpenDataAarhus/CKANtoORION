@@ -25,48 +25,58 @@ abstract class BaseFriluftslivPolygonReader extends BaseFeedReader
 
     $assets = array();
 
-    foreach ($sensors_array as $record) {
+    $lastSyncCache = $this->cache->getItem($this->id_string);
+    if (!$lastSyncCache->isHit()) {
+      $lastSync = null;
+    } else {
+      $lastSync = $lastSyncCache->get();
+    }
 
-      $asset = array(
-        'id' => 'urn:oc:entity:aarhus:friluftsliv:'.$this->id_string.':' . md5($record->properties->Navn),
-        'type' => 'urn:oc:entityType:'.$this->type,
+    if($lastSync < $last_modified_timestamp) {
 
-        'origin' => array(
-          'type' => 'urn:oc:attributeType:origin',
-          'value' => $this->origin_value,
-          'metadata' => array(
-            'urls' => array(
-              'type' => 'urls',
-              'value' => $this->origin_url
+      foreach ($sensors_array as $record) {
+
+        $asset = array(
+          'id' => 'urn:oc:entity:aarhus:friluftsliv:' . $this->id_string . ':' . md5($record->properties->Navn),
+          'type' => 'urn:oc:entityType:' . $this->type,
+
+          'origin' => array(
+            'type' => 'urn:oc:attributeType:origin',
+            'value' => $this->origin_value,
+            'metadata' => array(
+              'urls' => array(
+                'type' => 'urls',
+                'value' => $this->origin_url
+              )
             )
           )
-        )
-      );
+        );
 
-      // Time
-      $asset['TimeInstant'] = array(
-        'type' => 'urn:oc:attributeType:ISO8601',
-        'value' => gmdate('Y-m-d\TH:i:s.000\Z', $last_modified_timestamp)
-      );
+        // Time
+        $asset['TimeInstant'] = array(
+          'type' => 'urn:oc:attributeType:ISO8601',
+          'value' => gmdate('Y-m-d\TH:i:s.000\Z', $last_modified_timestamp)
+        );
 
-      $asset['bookable'] = array(
-        'type' => 'urn:oc:datatype:boolean',
-        'value' => $record->properties->Bookbar === 'Ja' ? 'true' : 'false'
-      );
-      $asset['name'] = array(
-        'type' => 'urn:oc:attributeType:name',
-        'value' => $record->properties->Navn
-      );
+        $asset['bookable'] = array(
+          'type' => 'urn:oc:datatype:boolean',
+          'value' => $record->properties->Bookbar === 'Ja' ? 'true' : 'false'
+        );
+        $asset['name'] = array(
+          'type' => 'urn:oc:attributeType:name',
+          'value' => $record->properties->Navn
+        );
 
-      // Location
+        // Location
 
-      $asset['location'] = array(
-        'type' => 'geo:json',
-        'value' => $record->geometry
-      );
+        $asset['location'] = array(
+          'type' => 'geo:json',
+          'value' => $record->geometry
+        );
 
-      $assets[] = $asset;
+        $assets[] = $asset;
 
+      }
     }
 
     return $assets;
