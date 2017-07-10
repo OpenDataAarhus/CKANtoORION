@@ -36,8 +36,6 @@ class OrionDeleteAllCommand extends ContainerAwareCommand
     $list = $this->getEntityList();
     $count = 0;
 
-    $output->writeln('<info>'. count($list) .' entities found</info>');
-
     while (!empty($list)) {
       foreach ($list as $entity) {
         $this->deleteEntity($entity->id);
@@ -78,7 +76,9 @@ class OrionDeleteAllCommand extends ContainerAwareCommand
         'query' => $query
       ));
       $response->getBody()->rewind();
-      $content = json_decode($response->getBody()->getContents());
+      $content = $response->getBody()->getContents();
+      $content = trim(preg_replace('/\s+/', ' ', $content));
+      $decoded = \GuzzleHttp\json_decode($content);
     } catch (RequestException $e) {
 
       if($e->getResponse()) {
@@ -91,6 +91,6 @@ class OrionDeleteAllCommand extends ContainerAwareCommand
       }
     }
 
-    return $content;
+    return $decoded;
   }
 }

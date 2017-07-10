@@ -170,9 +170,10 @@ class DetskeriaarhusReader
           'value' => $record->name
         );
 
+        $excerpt = trim(preg_replace('/\s+/', ' ', $record->excerpt));
         $asset['excerpt'] = array(
           'type' => 'urn:oc:attributeType:excerpt',
-          'value' => $record->excerpt
+          'value' => $excerpt
         );
 
         // @TODO Orion doesn't accept html so field excluded
