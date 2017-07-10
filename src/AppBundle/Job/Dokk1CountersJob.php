@@ -8,7 +8,7 @@ use Symfony\Component\Translation\Interval;
 
 class Dokk1CountersJob extends BaseJob
 {
-  protected $interval = 60 * 60;
+  protected $interval = 5 * 60;
 
   public function run($args)
   {
