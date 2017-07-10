@@ -24,7 +24,6 @@ use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
 use AppBundle\Feed\Dokk1CountersReader;
-use Symfony\Component\Cache\Adapter\TraceableAdapter;
 
 class FeedReaderFactory
 {
@@ -33,7 +32,7 @@ class FeedReaderFactory
   private $detskeriaarhusClient;
   private $adapter;
 
-  public function __construct(Client $odaaClient, Client $orionUpdater, Client $detskeriaarhusClient, TraceableAdapter $adapter)
+  public function __construct(Client $odaaClient, Client $orionUpdater, Client $detskeriaarhusClient, $adapter)
   {
     $this->odaaClient = $odaaClient;
     $this->orionUpdater = $orionUpdater;

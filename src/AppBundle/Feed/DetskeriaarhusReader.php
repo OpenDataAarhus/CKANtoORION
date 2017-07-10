@@ -17,8 +17,6 @@ use GuzzleHttp\Promise;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use ForceUTF8\Encoding;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
-use Symfony\Component\Cache\Adapter\TraceableAdapter;
 
 class DetskeriaarhusReader
 {
@@ -28,7 +26,7 @@ class DetskeriaarhusReader
   private $orionUpdater;
   private $cache;
 
-  public function __construct(Client $detskeriaarhusClient, Client $orionUpdater, TraceableAdapter $cache)
+  public function __construct(Client $detskeriaarhusClient, Client $orionUpdater, $cache)
   {
     $this->detskeriaarhusClient = $detskeriaarhusClient;
     $this->orionUpdater = $orionUpdater;
