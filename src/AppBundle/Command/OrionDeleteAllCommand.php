@@ -36,6 +36,8 @@ class OrionDeleteAllCommand extends ContainerAwareCommand
     $list = $this->getEntityList();
     $count = 0;
 
+    $output->writeln('<info>'. count($list) .' entities found</info>');
+
     while (!empty($list)) {
       foreach ($list as $entity) {
         $this->deleteEntity($entity->id);
