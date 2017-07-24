@@ -41,19 +41,14 @@ class Dokk1CountersReader extends BaseFeedReader
           )
         );
 
-        // attributes
-        $attributes = array();
-
         // Time
-        $time = DateTime::createFromFormat('Y-m-d\TH:i:s', $record->time);
-        $time->setTimezone(new DateTimeZone('Europe/Copenhagen'));
+        $timezone = new DateTimeZone('Europe/Copenhagen');
+        $time = DateTime::createFromFormat('Y-m-d\TH:i:s', $record->time, $timezone);
 
         $asset['TimeInstant'] = array(
           'type' => 'urn:oc:attributeType:ISO8601',
           'value' => gmdate('Y-m-d\TH:i:s.000\Z', $time->getTimestamp())
         );
-
-
 
         // Numbers
         $asset['visitors:in'] = array(
