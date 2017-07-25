@@ -59,7 +59,10 @@ class DetskeriaarhusReader
 
       $next_records = $decoded->{'hydra:member'};
 
-      if (!isset($decoded->{'hydra:view'}->{'hydra:next'}) || $decoded->{'hydra:view'}->{'hydra:next'} == '/api/events?page=3') {
+      if (!isset($decoded->{'hydra:view'}->{'hydra:next'})) {
+        foreach ($next_records as $record) {
+          $records[$record->{'@id'}] = $record;
+        }
         return $records;
       } else {
         foreach ($next_records as $record) {
@@ -89,18 +92,24 @@ class DetskeriaarhusReader
 
           try {
             $response = $client->get($placeID);
-          } catch (RequestException $e) {
-            echo Psr7\str($e->getRequest());
-            if ($e->hasResponse()) {
-              echo Psr7\str($e->getResponse());
-            }
-            throw new Exception('Network Error retrieving: ' . $placeID);
-          }
 
-          // https://github.com/8p/GuzzleBundle/issues/48
-          $response->getBody()->rewind();
-          $content = $response->getBody()->getContents();
-          $decoded = json_decode($content);
+            // https://github.com/8p/GuzzleBundle/issues/48
+            $response->getBody()->rewind();
+            $content = $response->getBody()->getContents();
+            $decoded = json_decode($content);
+
+          } catch (RequestException $e) {
+
+//            @TODO Event DB returns a HTTP 500 for places with many events/occurences, set place to NULL and skip
+
+//            echo Psr7\str($e->getRequest());
+//            if ($e->hasResponse()) {
+//              echo Psr7\str($e->getResponse());
+//            }
+//            throw new Exception('Network Error retrieving: ' . $placeID);
+
+            $decoded = NULL;
+          }
 
           $places[$placeID] = $decoded;
 
@@ -129,10 +138,6 @@ class DetskeriaarhusReader
       $next_url = self::FEED_PATH . '?updatedAt[after]=' . urlencode($lastSync);
     }
 
-    $lastSync = gmdate('Y-m-d\TH:i:sP');
-    $lastSyncCache->set($lastSync);
-    $this->cache->save($lastSyncCache);
-
     $events_array = $this->getPagedData($next_url);
     $places_array = $this->getPlaceData($events_array);
     $assets = array();
@@ -149,58 +154,74 @@ class DetskeriaarhusReader
         $first = $record->occurrences[0];
         $last = $record->occurrences[$count - 1];
 
-        $asset = array(
-          'id' => 'urn:oc:entity:aarhus:events:' . $id,
-          'type' => 'urn:oc:entityType:event',
+        $placeID = $first->place->{'@id'};
+        $place = $places_array[$placeID];
 
-          'origin' => array(
-            'type' => 'urn:oc:attributeType:origin',
-            'value' => 'Det sker i Aarhus',
-            'metadata' => array(
-              'urls' => array(
-                'type' => 'urls',
-                'value' => 'http://api.detskeriaarhus.dk/'
-              )
-            )
-          )
-        );
+//      @TODO Event DB returns a HTTP 500 for places with many events/occurences, set place to NULL and skip
+        if($place) {
 
-        $asset['name'] = array(
-          'type' => 'urn:oc:attributeType:name',
-          'value' => $record->name
-        );
+          $asset = [
+            'id' => 'urn:oc:entity:aarhus:events:' . $id,
+            'type' => 'urn:oc:entityType:event',
 
-        $excerpt = trim(preg_replace('/\s+/', ' ', $record->excerpt));
-        $asset['excerpt'] = array(
-          'type' => 'urn:oc:attributeType:excerpt',
-          'value' => $excerpt
-        );
+            'origin' => [
+              'type' => 'urn:oc:attributeType:origin',
+              'value' => 'Det sker i Aarhus',
+              'metadata' => [
+                'urls' => [
+                  'type' => 'urls',
+                  'value' => 'http://api.detskeriaarhus.dk/'
+                ]
+              ]
+            ]
+          ];
 
-        // @TODO Orion doesn't accept html so field excluded
+          $asset['name'] = [
+            'type' => 'urn:oc:attributeType:name',
+            'value' => $this->sanitizeText($record->name)
+          ];
+
+          $excerpt = $this->sanitizeText($record->excerpt);
+          $asset['excerpt'] = [
+            'type' => 'urn:oc:attributeType:excerpt',
+            'value' => $excerpt
+          ];
+
+          // @TODO Orion doesn't accept html so field excluded
 //        $asset['description'] = array(
 //          'type' => 'urn:oc:attributeType:description',
 //          'value' => $record->description
 //        );
 
-        // Time
-        $startTime = strtotime($first->startDate);
-        $asset['startTime'] = array(
-          'type' => 'urn:oc:attributeType:ISO8601',
-          'value' => gmdate('Y-m-d\TH:i:s.000\Z', $startTime)
-        );
+          // Time
+          $startTime = strtotime($first->startDate);
+          $endTime = strtotime($last->startDate);
 
-        $endTime = strtotime($last->endDate);
-        $asset['endTime'] = array(
-          'type' => 'urn:oc:attributeType:ISO8601',
-          'value' => gmdate('Y-m-d\TH:i:s.000\Z', $endTime)
-        );
+          $asset['TimeInstant'] = [
+            'type' => 'urn:oc:attributeType:ISO8601',
+            'value' => gmdate('Y-m-d\TH:i:s.000\Z', $startTime)
+          ];
 
-        $list = array();
-        foreach ($record->occurrences as $occurrence) {
-          $list[] = array('startDate' => $occurrence->startDate, 'endDate' => $occurrence->endDate);
-        }
+          $asset['firstEventTime'] = [
+            'type' => 'urn:oc:attributeType:ISO8601',
+            'value' => gmdate('Y-m-d\TH:i:s.000\Z', $endTime)
+          ];
 
-        // @TODO Orion doesn't accept the metadata list so field excluded
+          $asset['lastEventTime'] = [
+            'type' => 'urn:oc:attributeType:ISO8601',
+            'value' => gmdate('Y-m-d\TH:i:s.000\Z', $endTime)
+          ];
+
+          $asset['numberOfOccurrences'] = [
+            'type' => 'urn:oc:attributeType:numberOfOccurrences',
+            'value' => $count
+          ];
+
+//        @TODO Orion doesn't accept the metadata list so field excluded
+//        $list = array();
+//        foreach ($record->occurrences as $occurrence) {
+//          $list[] = array('startDate' => $occurrence->startDate, 'endDate' => $occurrence->endDate);
+//        }
 //        $asset['occurences'] = array(
 //          'type' => 'urn:oc:attributeType:count',
 //          'value' => $count,
@@ -209,68 +230,118 @@ class DetskeriaarhusReader
 //          )
 //        );
 
-        $asset['organizer'] = array(
-          'type' => 'urn:oc:attributeType:organizer',
-          'value' => $record->organizer->name
-        );
+          $asset['organizer'] = [
+            'type' => 'urn:oc:attributeType:organizer',
+            'value' => $this->sanitizeText($record->organizer->name)
+          ];
 
-        $asset['imageURL'] = array(
-          'type' => 'urn:oc:attributeType:imageURL',
-          'value' => $record->image
-        );
+          $asset['imageURL'] = [
+            'type' => 'urn:oc:attributeType:url',
+            'value' => $this->sanitizeUrl($record->image)
+          ];
 
-        $asset['videoURL'] = array(
-          'type' => 'urn:oc:attributeType:videoURL',
-          'value' => $record->videoUrl
-        );
+          $asset['videoURL'] = [
+            'type' => 'urn:oc:attributeType:url',
+            'value' => $this->sanitizeUrl($record->videoUrl)
+          ];
 
-        $asset['URL'] = array(
-          'type' => 'urn:oc:attributeType:url',
-          'value' => $record->url
-        );
+          $asset['URL'] = [
+            'type' => 'urn:oc:attributeType:url',
+            'value' => $this->sanitizeUrl($record->url)
+          ];
 
-        $asset['ticketURL'] = array(
-          'type' => 'urn:oc:attributeType:url',
-          'value' => $record->ticketPurchaseUrl
-        );
+          $asset['ticketURL'] = [
+            'type' => 'urn:oc:attributeType:url',
+            'value' => $this->sanitizeUrl($record->ticketPurchaseUrl)
+          ];
 
-        $asset['ticketPriceRange'] = array(
-          'type' => 'urn:oc:attributeType:ticketPriceRange',
-          'value' => $first->ticketPriceRange
-        );
+          $asset['ticketPriceRange'] = [
+            'type' => 'urn:oc:attributeType:ticketPriceRange',
+            'value' => $this->sanitizeText($first->ticketPriceRange)
+          ];
 
-        // Location
-        $placeID = $first->place->{'@id'};
-        $place = $places_array[$placeID];
+          // Location
+          $point_LAT = $place->latitude;
+          $point_LNG = $place->longitude;
+          $asset['location'] = [
+            'type' => 'geo:point',
+            'value' => $point_LAT . ', ' . $point_LNG
+          ];
 
-        $point_LAT = $place->latitude;
-        $point_LNG = $place->longitude;
-        $asset['location'] = array(
-          'type' => 'geo:point',
-          'value' => $point_LAT . ', ' . $point_LNG
-        );
+          $asset['streetAddress'] = [
+            'type' => 'urn:oc:attributeType:streetAddress',
+            'value' => $this->sanitizeText($place->streetAddress)
+          ];
 
-        $asset['streetAddress'] = array(
-          'type' => 'urn:oc:attributeType:streetAddress',
-          'value' => $place->streetAddress
-        );
+          $asset['city'] = [
+            'type' => 'urn:oc:attributeType:city',
+            'value' => $this->sanitizeText($place->addressLocality)
+          ];
 
-        $asset['city'] = array(
-          'type' => 'urn:oc:attributeType:city',
-          'value' => $place->addressLocality
-        );
+          $asset['postalCode'] = [
+            'type' => 'urn:oc:attributeType:postalCode',
+            'value' => $place->postalCode
+          ];
 
-        $asset['postalCode'] = array(
-          'type' => 'urn:oc:attributeType:postalCode',
-          'value' => $place->postalCode
-        );
-
-        $assets[] = $asset;
+          $assets[] = $asset;
+        }
       }
-
     }
 
+    $lastSync = gmdate('Y-m-d\TH:i:sP');
+    $lastSyncCache->set($lastSync);
+    $this->cache->save($lastSyncCache);
+
     return $assets;
+  }
+
+  /**
+   * Sanitize text for Orion, remove whitespace and linebreaks, remove Orion forbidden characters
+   *
+   * @param $text
+   *
+   * @return mixed
+   */
+  private function sanitizeText($text) {
+    if ($text) {
+      $text = trim(preg_replace('/\s+/', ' ', $text));
+
+      // https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
+      $text = str_replace('<', '', $text);
+      $text = str_replace('>', '', $text);
+      $text = str_replace('"', '', $text);
+      $text = str_replace("'", '', $text);
+      $text = str_replace('=', '', $text);
+      $text = str_replace(';', '', $text);
+      $text = str_replace('(', '', $text);
+      $text = str_replace(')', '', $text);
+    }
+
+    return $text;
+  }
+
+  /**
+   * Sanitize url for Orion, remove Orion forbidden characters
+   *
+   * @param $url
+   *
+   * @return mixed
+   */
+  private function sanitizeUrl($url) {
+    if($url) {
+
+      // https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
+      $url = str_replace('<', '%3C', $url);
+      $url = str_replace('>', '%3E', $url);
+      $url = str_replace('"', '%22', $url);
+      $url = str_replace("'", '%27', $url);
+      $url = str_replace('=', '%3D', $url);
+      $url = str_replace(';', '%3B', $url);
+      $url = str_replace('(', '%28', $url);
+      $url = str_replace(')', '%29', $url);
+    }
+
+    return $url;
   }
 
 }

@@ -224,7 +224,7 @@ class DefaultController extends Controller
     $feed = $this->get('app.feed_reader_factory')->getFeedReader($routeName);
     $assets = $feed->normalizeForOrganicity();
 
-    $selection = array_slice($assets, 0, 5, true);
+    $selection = array_slice($assets, 0, 50, true);
 
     return new JsonResponse($selection);
   }
