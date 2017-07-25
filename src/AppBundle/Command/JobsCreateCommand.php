@@ -49,27 +49,27 @@ class JobsCreateCommand extends ContainerAwareCommand
     $jobsService = $this->getContainer()->get('app.jobs_service');
 
     // create your job
-//    $jobs[] = new Dokk1CountersJob();
-//    $jobs[] = new RealTimeTrafficJob();
+    $jobs[] = new Dokk1CountersJob();
+    $jobs[] = new RealTimeTrafficJob();
     $jobs[] = new DetSkerIAarhusJob();
 
-//    $jobs[] = new FriluftslivBeachAreaJob();
-//    $jobs[] = new FriluftslivDogWalkingAreaJob();
-//    $jobs[] = new FriluftslivFirepitsJob();
-//    $jobs[] = new FriluftslivFitnessGymJob();
-//    $jobs[] = new FriluftslivForestJob();
-//    $jobs[] = new FriluftslivForestSmallJob();
-//    $jobs[] = new FriluftslivGearStationJob();
-//    $jobs[] = new FriluftslivHikingTrailsJob();
-//    $jobs[] = new FriluftslivHorseRidingTrailsJob();
-//    $jobs[] = new FriluftslivKioskJob();
-//    $jobs[] = new FriluftslivMountainbikeTrailsJob();
-//    $jobs[] = new FriluftslivNatureCenterJob();
-//    $jobs[] = new FriluftslivParksJob();
-//    $jobs[] = new FriluftslivRunningTrailsJob();
-//    $jobs[] = new FriluftslivShelterJob();
-//    $jobs[] = new FriluftslivToiletJob();
-//    $jobs[] = new FriluftslivTreeClimbingJob();
+    $jobs[] = new FriluftslivBeachAreaJob();
+    $jobs[] = new FriluftslivDogWalkingAreaJob();
+    $jobs[] = new FriluftslivFirepitsJob();
+    $jobs[] = new FriluftslivFitnessGymJob();
+    $jobs[] = new FriluftslivForestJob();
+    $jobs[] = new FriluftslivForestSmallJob();
+    $jobs[] = new FriluftslivGearStationJob();
+    $jobs[] = new FriluftslivHikingTrailsJob();
+    $jobs[] = new FriluftslivHorseRidingTrailsJob();
+    $jobs[] = new FriluftslivKioskJob();
+    $jobs[] = new FriluftslivMountainbikeTrailsJob();
+    $jobs[] = new FriluftslivNatureCenterJob();
+    $jobs[] = new FriluftslivParksJob();
+    $jobs[] = new FriluftslivRunningTrailsJob();
+    $jobs[] = new FriluftslivShelterJob();
+    $jobs[] = new FriluftslivToiletJob();
+    $jobs[] = new FriluftslivTreeClimbingJob();
 
     $timeOffset = 0;
     $created = 0;
