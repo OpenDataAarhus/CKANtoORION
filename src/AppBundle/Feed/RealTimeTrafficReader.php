@@ -49,7 +49,7 @@ class RealTimeTrafficReader extends BaseFeedReader
         );
 
         // Time
-        $timezone = new DateTimeZone('Europe/Copenhagen');
+        $timezone = new DateTimeZone('UTC');
         $time = DateTime::createFromFormat('Y-m-d\TH:i:s', $record->TIMESTAMP, $timezone);
 
         $asset['TimeInstant'] = array(
@@ -62,7 +62,6 @@ class RealTimeTrafficReader extends BaseFeedReader
           'type' => 'geo:point',
           'value' => $record->sensor->POINT_2_LAT . ", " . $record->sensor->POINT_2_LNG
         );
-
 
         //Speed
         $asset['speed:average'] = array(
