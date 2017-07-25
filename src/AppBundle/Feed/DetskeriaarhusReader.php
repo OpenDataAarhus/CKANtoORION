@@ -54,20 +54,14 @@ class DetskeriaarhusReader
       $content = $response->getBody()->getContents();
 
       $decoded = json_decode($content);
-      $member = $decoded->{'hydra:member'};
-      $view = $decoded->{'hydra:view'};
-
       $next_records = $decoded->{'hydra:member'};
+      foreach ($next_records as $record) {
+        $records[$record->{'@id'}] = $record;
+      }
 
       if (!isset($decoded->{'hydra:view'}->{'hydra:next'})) {
-        foreach ($next_records as $record) {
-          $records[$record->{'@id'}] = $record;
-        }
         return $records;
       } else {
-        foreach ($next_records as $record) {
-          $records[$record->{'@id'}] = $record;
-        }
         return $this->getPagedData($decoded->{'hydra:view'}->{'hydra:next'}, $records);
       }
     }
