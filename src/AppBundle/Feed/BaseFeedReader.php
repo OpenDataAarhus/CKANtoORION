@@ -17,8 +17,8 @@ use ForceUTF8\Encoding;
 
 abstract class BaseFeedReader
 {
-  private $odaaClient;
-  private $orionUpdater;
+  protected $odaaClient;
+  protected $orionUpdater;
   protected $cache;
 
   public function __construct(Client $odaaClient, Client $orionUpdater, $cache)
@@ -102,5 +102,54 @@ abstract class BaseFeedReader
 
     throw new Exception('$url cannot be empty');
   }
+
+    /**
+     * Sanitize text for Orion, remove whitespace and linebreaks, remove Orion forbidden characters
+     *
+     * @param $text
+     *
+     * @return mixed
+     */
+    protected function sanitizeText($text) {
+        if ($text) {
+            $text = trim(preg_replace('/\s+/', ' ', $text));
+
+            // https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
+            $text = str_replace('<', '', $text);
+            $text = str_replace('>', '', $text);
+            $text = str_replace('"', '', $text);
+            $text = str_replace("'", '', $text);
+            $text = str_replace('=', '', $text);
+            $text = str_replace(';', '', $text);
+            $text = str_replace('(', '', $text);
+            $text = str_replace(')', '', $text);
+        }
+
+        return $text;
+    }
+
+    /**
+     * Sanitize url for Orion, remove Orion forbidden characters
+     *
+     * @param $url
+     *
+     * @return mixed
+     */
+    protected function sanitizeUrl($url) {
+        if($url) {
+
+            // https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
+            $url = str_replace('<', '%3C', $url);
+            $url = str_replace('>', '%3E', $url);
+            $url = str_replace('"', '%22', $url);
+            $url = str_replace("'", '%27', $url);
+            $url = str_replace('=', '%3D', $url);
+            $url = str_replace(';', '%3B', $url);
+            $url = str_replace('(', '%28', $url);
+            $url = str_replace(')', '%29', $url);
+        }
+
+        return $url;
+    }
 
 }

@@ -64,7 +64,7 @@ abstract class BaseFriluftslivGeoJsonReader extends BaseFeedReader
         );
         $asset['name'] = array(
           'type' => 'urn:oc:attributeType:name',
-          'value' => $record->properties->Navn
+          'value' => $this->sanitizeText($record->properties->Navn)
         );
 
         // Location

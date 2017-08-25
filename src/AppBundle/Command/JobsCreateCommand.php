@@ -19,6 +19,7 @@ use AppBundle\Job\FriluftslivKioskJob;
 use AppBundle\Job\FriluftslivMountainbikeTrailsJob;
 use AppBundle\Job\FriluftslivNatureCenterJob;
 use AppBundle\Job\FriluftslivParksJob;
+use AppBundle\Job\FriluftslivPlaygroundJob;
 use AppBundle\Job\FriluftslivRunningTrailsJob;
 use AppBundle\Job\FriluftslivShelterJob;
 use AppBundle\Job\FriluftslivToiletJob;
@@ -70,6 +71,7 @@ class JobsCreateCommand extends ContainerAwareCommand
     $jobs[] = new FriluftslivShelterJob();
     $jobs[] = new FriluftslivToiletJob();
     $jobs[] = new FriluftslivTreeClimbingJob();
+    $jobs[] = new FriluftslivPlaygroundJob();
 
     $timeOffset = 0;
     $created = 0;

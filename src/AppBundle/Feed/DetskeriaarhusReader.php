@@ -18,13 +18,11 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use ForceUTF8\Encoding;
 
-class DetskeriaarhusReader
+class DetskeriaarhusReader extends BaseFeedReader
 {
   const FEED_PATH = '/api/events';
 
-  private $detskeriaarhusClient;
-  private $orionUpdater;
-  private $cache;
+  protected $detskeriaarhusClient;
 
   public function __construct(Client $detskeriaarhusClient, Client $orionUpdater, $cache)
   {
@@ -224,9 +222,11 @@ class DetskeriaarhusReader
 //          )
 //        );
 
+          $organizer = ($record->organizer) ? $record->organizer->name : '';
+          $organizer = $this->sanitizeText($organizer);
           $asset['organizer'] = [
             'type' => 'urn:oc:attributeType:organizer',
-            'value' => $this->sanitizeText($record->organizer->name)
+            'value' => $this->sanitizeText($organizer)
           ];
 
           $asset['imageURL'] = [
@@ -287,55 +287,6 @@ class DetskeriaarhusReader
     $this->cache->save($lastSyncCache);
 
     return $assets;
-  }
-
-  /**
-   * Sanitize text for Orion, remove whitespace and linebreaks, remove Orion forbidden characters
-   *
-   * @param $text
-   *
-   * @return mixed
-   */
-  private function sanitizeText($text) {
-    if ($text) {
-      $text = trim(preg_replace('/\s+/', ' ', $text));
-
-      // https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
-      $text = str_replace('<', '', $text);
-      $text = str_replace('>', '', $text);
-      $text = str_replace('"', '', $text);
-      $text = str_replace("'", '', $text);
-      $text = str_replace('=', '', $text);
-      $text = str_replace(';', '', $text);
-      $text = str_replace('(', '', $text);
-      $text = str_replace(')', '', $text);
-    }
-
-    return $text;
-  }
-
-  /**
-   * Sanitize url for Orion, remove Orion forbidden characters
-   *
-   * @param $url
-   *
-   * @return mixed
-   */
-  private function sanitizeUrl($url) {
-    if($url) {
-
-      // https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
-      $url = str_replace('<', '%3C', $url);
-      $url = str_replace('>', '%3E', $url);
-      $url = str_replace('"', '%22', $url);
-      $url = str_replace("'", '%27', $url);
-      $url = str_replace('=', '%3D', $url);
-      $url = str_replace(';', '%3B', $url);
-      $url = str_replace('(', '%28', $url);
-      $url = str_replace(')', '%29', $url);
-    }
-
-    return $url;
   }
 
 }
