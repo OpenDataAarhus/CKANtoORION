@@ -13,8 +13,14 @@ use DateTime;
 use DateTimeZone;
 use stdClass;
 
-abstract class BaseFriluftslivPointReader extends BaseFeedReader
+class FriluftslivPlaygroundReader extends BaseFeedReader
 {
+    protected $feed_path = '/dataset/4c838a0e-c08f-4bdc-ad6e-44e09d4a222d/resource/14572611-44bf-4eee-9cf0-25d7f3c2eeef/download/legepladser.geojson';
+
+    protected $id_string = 'playgrounds';
+    protected $type = 'playground';
+    protected $origin_value = 'Public Playgrounds in Aarhus';
+    protected $origin_url = 'https://www.odaa.dk/dataset/legepladser';
 
     public function normalizeForOrganicity()
     {
@@ -36,8 +42,17 @@ abstract class BaseFriluftslivPointReader extends BaseFeedReader
 
             foreach ($sensors_array as $record) {
 
+                $info = explode('<td>', $record->properties->Description);
+                $info = explode('</td>', $info[4]);
+                $info = explode('  ', $info[0]);
+                $name = array_shift($info);
+                $description = implode(', ', $info);
+
+                $name = $this->sanitizeText($name);
+                $description = $this->sanitizeText($description);
+
                 $asset = [
-                  'id' => 'urn:oc:entity:aarhus:friluftsliv:'.$this->id_string.':'.md5($record->properties->Navn),
+                  'id' => 'urn:oc:entity:aarhus:friluftsliv:'.$this->id_string.':'.md5($name),
                   'type' => 'urn:oc:entityType:'.$this->type,
 
                   'origin' => [
@@ -60,11 +75,15 @@ abstract class BaseFriluftslivPointReader extends BaseFeedReader
 
                 $asset['bookable'] = [
                   'type' => 'urn:oc:datatype:boolean',
-                  'value' => $record->properties->Bookbar === 'Ja' ? 'true' : 'false',
+                  'value' => 'false',
                 ];
                 $asset['name'] = [
                   'type' => 'urn:oc:attributeType:name',
-                  'value' => $this->sanitizeText($record->properties->Navn),
+                  'value' => $name,
+                ];
+                $asset['description'] = [
+                  'type' => 'urn:oc:attributeType:description',
+                  'value' => $description,
                 ];
 
                 // Location

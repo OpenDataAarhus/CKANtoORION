@@ -16,60 +16,73 @@ use stdClass;
 abstract class BaseFriluftslivGeoJsonReader extends BaseFeedReader
 {
 
-  public function normalizeForOrganicity()
-  {
-    $odaa_data = $this->getGeoData($this->feed_path);
-    $sensors_array = $odaa_data['features'];
-    $last_modified = $odaa_data['Last-Modified'];
-    $last_modified_timestamp = strtotime($last_modified);
+    public function normalizeForOrganicity()
+    {
+        $odaa_data = $this->getGeoData($this->feed_path);
+        $sensors_array = $odaa_data['features'];
+        $last_modified = $odaa_data['Last-Modified'];
+        $last_modified_timestamp = strtotime($last_modified);
 
-    $assets = array();
+        $assets = [];
 
-    foreach ($sensors_array as $record) {
+        $lastSyncCache = $this->cache->getItem($this->id_string);
+        if (!$lastSyncCache->isHit()) {
+            $lastSync = null;
+        } else {
+            $lastSync = $lastSyncCache->get();
+        }
 
-      $asset = array(
-        'id' => 'urn:oc:entity:aarhus:friluftsliv:'.$this->id_string.':' . md5($record->properties->Navn),
-        'type' => 'urn:oc:entityType:'.$this->type,
+        if ($lastSync < $last_modified_timestamp) {
 
-        'origin' => array(
-          'type' => 'urn:oc:attributeType:origin',
-          'value' => $this->origin_value,
-          'metadata' => array(
-            'urls' => array(
-              'type' => 'urls',
-              'value' => $this->origin_url
-            )
-          )
-        )
-      );
+            foreach ($sensors_array as $record) {
 
-      // Time
-      $asset['TimeInstant'] = array(
-        'type' => 'urn:oc:attributeType:ISO8601',
-        'value' => gmdate('Y-m-d\TH:i:s.000\Z', $last_modified_timestamp)
-      );
+                $asset = [
+                  'id' => 'urn:oc:entity:aarhus:friluftsliv:'.$this->id_string.':'.md5($record->properties->Navn),
+                  'type' => 'urn:oc:entityType:'.$this->type,
 
-      $asset['bookable'] = array(
-        'type' => 'urn:oc:datatype:boolean',
-        'value' => $record->properties->Bookbar === 'Ja' ? 'true' : 'false'
-      );
-      $asset['name'] = array(
-        'type' => 'urn:oc:attributeType:name',
-        'value' => $record->properties->Navn
-      );
+                  'origin' => [
+                    'type' => 'urn:oc:attributeType:origin',
+                    'value' => $this->origin_value,
+                    'metadata' => [
+                      'urls' => [
+                        'type' => 'urls',
+                        'value' => $this->origin_url,
+                      ],
+                    ],
+                  ],
+                ];
 
-      // Location
+                // Time
+                $asset['TimeInstant'] = [
+                  'type' => 'urn:oc:attributeType:ISO8601',
+                  'value' => gmdate('Y-m-d\TH:i:s.000\Z', $last_modified_timestamp),
+                ];
 
-      $asset['location'] = array(
-        'type' => 'geo:json',
-        'value' => $record->geometry
-      );
+                $asset['bookable'] = [
+                  'type' => 'urn:oc:datatype:boolean',
+                  'value' => $record->properties->Bookbar === 'Ja' ? 'true' : 'false',
+                ];
+                $asset['name'] = [
+                  'type' => 'urn:oc:attributeType:name',
+                  'value' => $this->sanitizeText($record->properties->Navn),
+                ];
 
-      $assets[] = $asset;
+                // Location
 
+                $asset['location'] = [
+                  'type' => 'geo:json',
+                  'value' => $record->geometry,
+                ];
+
+                $assets[] = $asset;
+
+            }
+
+            $lastSyncCache->set($last_modified_timestamp);
+            $this->cache->save($lastSyncCache);
+        }
+
+        return $assets;
     }
-
-    return $assets;
-  }
 
 }

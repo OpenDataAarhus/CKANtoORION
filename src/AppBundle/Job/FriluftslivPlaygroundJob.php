@@ -4,7 +4,7 @@ namespace AppBundle\Job;
 
 use ResqueBundle\Resque\ContainerAwareJob;
 
-class FriluftslivFirepitsJob extends BaseJob
+class FriluftslivPlaygroundJob extends BaseJob
 {
     protected $interval = 24 * 60 * 60;
 
@@ -12,7 +12,7 @@ class FriluftslivFirepitsJob extends BaseJob
     {
         parent::run($args);
 
-        $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('friluftsliv_firepits');
+        $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('friluftsliv_playgrounds');
         $assets = $feed->normalizeForOrganicity();
 
         $this->spawnBatchJob($assets);
