@@ -80,7 +80,7 @@ guzzle:
         detskeriaarhus:
             base_url: "http://api.detskeriaarhus.dk"
             options:
-              timeout: 45
+              timeout: 5
 
             # custom headers
             headers:

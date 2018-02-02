@@ -17,259 +17,276 @@ use GuzzleHttp\Promise;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use ForceUTF8\Encoding;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
-use Symfony\Component\Cache\Adapter\TraceableAdapter;
 
-class DetskeriaarhusReader
+class DetskeriaarhusReader extends BaseFeedReader
 {
-  const FEED_PATH = '/api/events';
+    const FEED_PATH = '/api/events';
 
-  private $detskeriaarhusClient;
-  private $orionUpdater;
-  private $cache;
+    protected $detskeriaarhusClient;
 
-  public function __construct(Client $detskeriaarhusClient, Client $orionUpdater, TraceableAdapter $cache)
-  {
-    $this->detskeriaarhusClient = $detskeriaarhusClient;
-    $this->orionUpdater = $orionUpdater;
-    $this->cache = $cache;
-  }
-
-  protected function getPagedData($next_url, $records = array())
-  {
-    if (!empty($next_url)) {
-
-      $client = $this->detskeriaarhusClient;
-
-      try {
-        $response = $client->get($next_url);
-      } catch (RequestException $e) {
-        echo Psr7\str($e->getRequest());
-        if ($e->hasResponse()) {
-          echo Psr7\str($e->getResponse());
-        }
-        throw new Exception('Network Error retrieving: ' . $next_url);
-      }
-
-      // https://github.com/8p/GuzzleBundle/issues/48
-      $response->getBody()->rewind();
-      $content = $response->getBody()->getContents();
-
-      $decoded = json_decode($content);
-      $member = $decoded->{'hydra:member'};
-      $view = $decoded->{'hydra:view'};
-
-      $next_records = $decoded->{'hydra:member'};
-
-      if (!isset($decoded->{'hydra:view'}->{'hydra:next'}) || $decoded->{'hydra:view'}->{'hydra:next'} == '/api/events?page=3') {
-        return $records;
-      } else {
-        foreach ($next_records as $record) {
-          $records[$record->{'@id'}] = $record;
-        }
-        return $this->getPagedData($decoded->{'hydra:view'}->{'hydra:next'}, $records);
-      }
+    public function __construct(Client $detskeriaarhusClient, Client $orionUpdater, $cache)
+    {
+        $this->detskeriaarhusClient = $detskeriaarhusClient;
+        $this->orionUpdater = $orionUpdater;
+        $this->cache = $cache;
     }
 
-    throw new Exception('$next_url cannot be empty');
-  }
+    protected function getPagedData($next_url, $records = [])
+    {
+        if (!empty($next_url)) {
 
-  private function getPlaceData($events)
-  {
+            $client = $this->detskeriaarhusClient;
 
-    $client = $this->detskeriaarhusClient;
-    $places = array();
-
-    foreach ($events as $event) {
-      $occurences = $event->occurrences;
-      $placeID = empty($occurences) ? null : $occurences[0]->place->{'@id'};
-
-      if ($placeID && !array_key_exists($placeID, $places)) {
-
-        $placeCache = $this->cache->getItem('detskeriaarhus_place' . str_replace('/', '_', $placeID));
-        if (!$placeCache->isHit()) {
-
-          try {
-            $response = $client->get($placeID);
-          } catch (RequestException $e) {
-            echo Psr7\str($e->getRequest());
-            if ($e->hasResponse()) {
-              echo Psr7\str($e->getResponse());
+            try {
+                $response = $client->get($next_url);
+            } catch (RequestException $e) {
+                echo Psr7\str($e->getRequest());
+                if ($e->hasResponse()) {
+                    echo Psr7\str($e->getResponse());
+                }
+                throw new Exception('Network Error retrieving: '.$next_url);
             }
-            throw new Exception('Network Error retrieving: ' . $placeID);
-          }
 
-          // https://github.com/8p/GuzzleBundle/issues/48
-          $response->getBody()->rewind();
-          $content = $response->getBody()->getContents();
-          $decoded = json_decode($content);
+            // https://github.com/8p/GuzzleBundle/issues/48
+            $response->getBody()->rewind();
+            $content = $response->getBody()->getContents();
 
-          $places[$placeID] = $decoded;
+            $decoded = json_decode($content);
+            $next_records = $decoded->{'hydra:member'};
+            foreach ($next_records as $record) {
+                $records[$record->{'@id'}] = $record;
+            }
 
-          $placeCache->set($decoded);
-          $placeCache->expiresAfter(24 * 60 * 60);
-          $this->cache->save($placeCache);
+            if (!isset($decoded->{'hydra:view'}->{'hydra:next'})) {
+                return $records;
+            } else {
+                return $this->getPagedData($decoded->{'hydra:view'}->{'hydra:next'}, $records);
+            }
+        }
 
+        throw new Exception('$next_url cannot be empty');
+    }
+
+    private function getPlaceData($events)
+    {
+
+        $client = $this->detskeriaarhusClient;
+        $places = [];
+
+        foreach ($events as $event) {
+            $occurences = $event->occurrences;
+            $placeID = empty($occurences) ? null : $occurences[0]->place->{'@id'};
+
+            if ($placeID && !array_key_exists($placeID, $places)) {
+
+                $placeCache = $this->cache->getItem('detskeriaarhus_place'.str_replace('/', '_', $placeID));
+                if (!$placeCache->isHit()) {
+
+                    try {
+                        $response = $client->get($placeID);
+
+                        // https://github.com/8p/GuzzleBundle/issues/48
+                        $response->getBody()->rewind();
+                        $content = $response->getBody()->getContents();
+                        $decoded = json_decode($content);
+
+                    } catch (RequestException $e) {
+
+//            @TODO Event DB returns a HTTP 500 for places with many events/occurences, set place to NULL and skip
+
+//            echo Psr7\str($e->getRequest());
+//            if ($e->hasResponse()) {
+//              echo Psr7\str($e->getResponse());
+//            }
+//            throw new Exception('Network Error retrieving: ' . $placeID);
+
+                        $decoded = null;
+                    }
+
+                    $places[$placeID] = $decoded;
+
+                    $placeCache->set($decoded);
+                    $placeCache->expiresAfter(24 * 60 * 60);
+                    $this->cache->save($placeCache);
+
+                } else {
+                    $decoded = $placeCache->get();
+                    $places[$placeID] = $decoded;
+                }
+
+            }
+        }
+
+        return $places;
+    }
+
+    public function normalizeForOrganicity()
+    {
+        $lastSyncCache = $this->cache->getItem('detskeriaarhus_lastSync');
+        if (!$lastSyncCache->isHit()) {
+            $next_url = self::FEED_PATH;
         } else {
-          $decoded = $placeCache->get();
-          $places[$placeID] = $decoded;
+            $lastSync = $lastSyncCache->get();
+            $next_url = self::FEED_PATH.'?updatedAt[after]='.urlencode($lastSync);
         }
 
-      }
-    }
+        $events_array = $this->getPagedData($next_url);
+        $places_array = $this->getPlaceData($events_array);
+        $assets = [];
 
-    return $places;
-  }
+        foreach ($events_array as $record) {
 
-  public function normalizeForOrganicity()
-  {
-    $lastSyncCache = $this->cache->getItem('detskeriaarhus_lastSync');
-    if (!$lastSyncCache->isHit()) {
-      $next_url = self::FEED_PATH;
-    } else {
-      $lastSync = $lastSyncCache->get();
-      $next_url = self::FEED_PATH . '?updatedAt[after]=' . urlencode($lastSync);
-    }
+            $count = count($record->occurrences);
 
-    $lastSync = gmdate('Y-m-d\TH:i:sP');
-    $lastSyncCache->set($lastSync);
-    $this->cache->save($lastSyncCache);
+            if ($count > 0) {
 
-    $events_array = $this->getPagedData($next_url);
-    $places_array = $this->getPlaceData($events_array);
-    $assets = array();
+                $pathinfo = pathinfo($record->{'@id'});
+                $id = $pathinfo['basename'];
 
-    foreach ($events_array as $record) {
+                $first = $record->occurrences[0];
+                $last = $record->occurrences[$count - 1];
 
-      $count = count($record->occurrences);
+                $placeID = $first->place->{'@id'};
+                $place = $places_array[$placeID];
 
-      if ($count > 0) {
+//      @TODO Event DB returns a HTTP 500 for places with many events/occurences, set place to NULL and skip
+                if ($place) {
 
-        $pathinfo = pathinfo($record->{'@id'});
-        $id = $pathinfo['basename'];
+                    $asset = [
+                      'id' => 'urn:oc:entity:aarhus:events:'.$id,
+                      'type' => 'urn:oc:entityType:event',
 
-        $first = $record->occurrences[0];
-        $last = $record->occurrences[$count - 1];
+                      'origin' => [
+                        'type' => 'urn:oc:attributeType:origin',
+                        'value' => 'Det sker i Aarhus',
+                        'metadata' => [
+                          'urls' => [
+                            'type' => 'urls',
+                            'value' => 'http://api.detskeriaarhus.dk/',
+                          ],
+                        ],
+                      ],
+                    ];
 
-        $asset = array(
-          'id' => 'urn:oc:entity:aarhus:events:' . $id,
-          'type' => 'urn:oc:entityType:event',
+                    $asset['name'] = [
+                      'type' => 'urn:oc:attributeType:name',
+                      'value' => $this->sanitizeText($record->name),
+                    ];
 
-          'origin' => array(
-            'type' => 'urn:oc:attributeType:origin',
-            'value' => 'Det sker i Aarhus',
-            'metadata' => array(
-              'urls' => array(
-                'type' => 'urls',
-                'value' => 'http://api.detskeriaarhus.dk/'
-              )
-            )
-          )
-        );
+                    $excerpt = $this->sanitizeText($record->excerpt);
+                    $asset['excerpt'] = [
+                      'type' => 'urn:oc:attributeType:excerpt',
+                      'value' => $excerpt,
+                    ];
 
-        $asset['name'] = array(
-          'type' => 'urn:oc:attributeType:name',
-          'value' => $record->name
-        );
+                    // @TODO Orion doesn't accept html so field excluded
+//        $asset['description'] = array(
+//          'type' => 'urn:oc:attributeType:description',
+//          'value' => $record->description
+//        );
 
-        $asset['excerpt'] = array(
-          'type' => 'urn:oc:attributeType:excerpt',
-          'value' => $record->excerpt
-        );
+                    // Time
+                    $startTime = strtotime($first->startDate);
+                    $endTime = strtotime($last->startDate);
 
-        $asset['description'] = array(
-          'type' => 'urn:oc:attributeType:description',
-          'value' => $record->description
-        );
+                    $asset['TimeInstant'] = [
+                      'type' => 'urn:oc:attributeType:ISO8601',
+                      'value' => gmdate('Y-m-d\TH:i:s.000\Z', $startTime),
+                    ];
 
-        // Time
-        $startTime = strtotime($first->startDate);
-        $asset['startTime'] = array(
-          'type' => 'urn:oc:attributeType:ISO8601',
-          'value' => gmdate('Y-m-d\TH:i:s.000\Z', $startTime)
-        );
+                    $asset['firstEventTime'] = [
+                      'type' => 'urn:oc:attributeType:ISO8601',
+                      'value' => gmdate('Y-m-d\TH:i:s.000\Z', $endTime),
+                    ];
 
-        $endTime = strtotime($last->endDate);
-        $asset['endTime'] = array(
-          'type' => 'urn:oc:attributeType:ISO8601',
-          'value' => gmdate('Y-m-d\TH:i:s.000\Z', $endTime)
-        );
+                    $asset['lastEventTime'] = [
+                      'type' => 'urn:oc:attributeType:ISO8601',
+                      'value' => gmdate('Y-m-d\TH:i:s.000\Z', $endTime),
+                    ];
 
-        $list = array();
-        foreach ($record->occurrences as $occurrence) {
-          $list[] = array('startDate' => $occurrence->startDate, 'endDate' => $occurrence->endDate);
+                    $asset['numberOfOccurrences'] = [
+                      'type' => 'urn:oc:attributeType:numberOfOccurrences',
+                      'value' => $count,
+                    ];
+
+//        @TODO Orion doesn't accept the metadata list so field excluded
+//        $list = array();
+//        foreach ($record->occurrences as $occurrence) {
+//          $list[] = array('startDate' => $occurrence->startDate, 'endDate' => $occurrence->endDate);
+//        }
+//        $asset['occurences'] = array(
+//          'type' => 'urn:oc:attributeType:count',
+//          'value' => $count,
+//          'metadata' => array(
+//            'list' => $list
+//          )
+//        );
+
+                    $organizer = ($record->organizer) ? $record->organizer->name : '';
+                    $organizer = $this->sanitizeText($organizer);
+                    $asset['organizer'] = [
+                      'type' => 'urn:oc:attributeType:organizer',
+                      'value' => $this->sanitizeText($organizer),
+                    ];
+
+                    $asset['imageURL'] = [
+                      'type' => 'urn:oc:attributeType:url',
+                      'value' => $this->sanitizeUrl($record->image),
+                    ];
+
+                    $asset['videoURL'] = [
+                      'type' => 'urn:oc:attributeType:url',
+                      'value' => $this->sanitizeUrl($record->videoUrl),
+                    ];
+
+                    $asset['URL'] = [
+                      'type' => 'urn:oc:attributeType:url',
+                      'value' => $this->sanitizeUrl($record->url),
+                    ];
+
+                    $asset['ticketURL'] = [
+                      'type' => 'urn:oc:attributeType:url',
+                      'value' => $this->sanitizeUrl($record->ticketPurchaseUrl),
+                    ];
+
+                    $asset['ticketPriceRange'] = [
+                      'type' => 'urn:oc:attributeType:ticketPriceRange',
+                      'value' => $this->sanitizeText($first->ticketPriceRange),
+                    ];
+
+                    // Location
+                    $point_LAT = $place->latitude;
+                    $point_LNG = $place->longitude;
+                    $asset['location'] = [
+                      'type' => 'geo:point',
+                      'value' => $point_LAT.', '.$point_LNG,
+                    ];
+
+                    $asset['streetAddress'] = [
+                      'type' => 'urn:oc:attributeType:streetAddress',
+                      'value' => $this->sanitizeText($place->streetAddress),
+                    ];
+
+                    $asset['city'] = [
+                      'type' => 'urn:oc:attributeType:city',
+                      'value' => $this->sanitizeText($place->addressLocality),
+                    ];
+
+                    $asset['postalCode'] = [
+                      'type' => 'urn:oc:attributeType:postalCode',
+                      'value' => $place->postalCode,
+                    ];
+
+                    $assets[] = $asset;
+                }
+            }
         }
 
-        $asset['occurences'] = array(
-          'type' => 'urn:oc:attributeType:count',
-          'value' => $count,
-          'metadata' => array(
-            'list' => $list
-          )
-        );
+        $lastSync = gmdate('Y-m-d\TH:i:sP');
+        $lastSyncCache->set($lastSync);
+        $this->cache->save($lastSyncCache);
 
-        $asset['organizer'] = array(
-          'type' => 'urn:oc:attributeType:organizer',
-          'value' => $record->organizer->name
-        );
-
-        $asset['imageURL'] = array(
-          'type' => 'urn:oc:attributeType:imageURL',
-          'value' => $record->image
-        );
-
-        $asset['videoURL'] = array(
-          'type' => 'urn:oc:attributeType:videoURL',
-          'value' => $record->videoUrl
-        );
-
-        $asset['URL'] = array(
-          'type' => 'urn:oc:attributeType:url',
-          'value' => $record->url
-        );
-
-        $asset['ticketURL'] = array(
-          'type' => 'urn:oc:attributeType:url',
-          'value' => $record->ticketPurchaseUrl
-        );
-
-        $asset['ticketPriceRange'] = array(
-          'type' => 'urn:oc:attributeType:ticketPriceRange',
-          'value' => $first->ticketPriceRange
-        );
-
-        // Location
-        $placeID = $first->place->{'@id'};
-        $place = $places_array[$placeID];
-
-        $point_LAT = $place->latitude;
-        $point_LNG = $place->longitude;
-        $asset['location'] = array(
-          'type' => 'geo:point',
-          'value' => $point_LAT . ', ' . $point_LNG
-        );
-
-        $asset['streetAddress'] = array(
-          'type' => 'urn:oc:attributeType:streetAddress',
-          'value' => $place->streetAddress
-        );
-
-        $asset['city'] = array(
-          'type' => 'urn:oc:attributeType:city',
-          'value' => $place->addressLocality
-        );
-
-        $asset['postalCode'] = array(
-          'type' => 'urn:oc:attributeType:postalCode',
-          'value' => $place->postalCode
-        );
-
-        $assets[] = $asset;
-      }
-
+        return $assets;
     }
-
-    return $assets;
-  }
 
 }

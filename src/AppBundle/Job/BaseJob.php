@@ -8,57 +8,50 @@ use Symfony\Component\Translation\Interval;
 
 class BaseJob extends ContainerAwareJob
 {
-  protected $interval = 60 * 60 * 24;
-  protected $resque;
+    protected $interval = 60 * 60 * 24;
+    protected $resque;
 
-  public function run($args)
-  {
-    $this->resque = $this->getContainer()->get('resque');
-    $jobsService = $this->getContainer()->get('app.jobs_service');
+    public function run($args)
+    {
+        $this->resque = $this->getContainer()->get('resque');
+        $jobsService = $this->getContainer()->get('app.jobs_service');
 
-    if (!$jobsService->isAllreadyQueued($this)) {
-      $this->resque->enqueueIn($this->interval, $this);
+        if (!$jobsService->isAllreadyQueued($this)) {
+            $this->resque->enqueueIn($this->interval, $this);
+        }
+
     }
 
-  }
+    protected function spawnSingleJobs($assets)
+    {
+        foreach ($assets as $asset) {
+            $syncJob = new SyncJob();
+            $syncJob->args = [
+              'assets' => [$asset],
+            ];
 
-  protected function spawnSingleJobs($assets) {
-    foreach ($assets as $asset) {
-      $syncJob = new SyncJob();
-      $syncJob->args = array(
-        'assets' => array($asset)
-      );
-
-      $this->resque->enqueue($syncJob);
+            $this->resque->enqueue($syncJob);
+        }
     }
-  }
 
-  // @TODO Test to see if it's the batch job that cause problems with subscription updates
-  protected function spawnBatchJob($assets) {
-    $seconds = 1;
-    $count = 0;
+    // @TODO Test to see if it's the batch job that cause problems with subscription updates
+    protected function spawnBatchJob($assets)
+    {
+        $seconds = 1;
+        $count = 0;
 
-    // @TODO / Hack: Notifications seems to skip every 5. Shuffle to ensure diff order each time
-    ksort($assets);
+        // @TODO / Hack: Notifications seems to skip every 5. Shuffle to ensure diff order each time
+        ksort($assets);
 
-    foreach ($assets as $asset) {
-      $syncJob = new SyncJob();
-      $syncJob->args = array(
-        'assets' => array($asset)
-      );
+        foreach ($assets as $asset) {
+            $syncJob = new SyncJob();
+            $syncJob->args = [
+              'assets' => [$asset],
+            ];
 
-      $this->resque->enqueueIn($seconds, $syncJob);
-      $seconds = ($count % 3 == 0) ? $seconds + 1 : $seconds;
+            $this->resque->enqueueIn($seconds, $syncJob);
+            $seconds++;
+        }
     }
-  }
-
-//  protected function spawnBatchJob($assets) {
-//    $syncJob = new SyncJob();
-//    $syncJob->args = array(
-//      'assets'    => $assets
-//    );
-//
-//    $this->resque->enqueue($syncJob);
-//  }
 
 }
