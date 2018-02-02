@@ -67,8 +67,8 @@ guzzle:
                 Fiware-Service: "organicity"
                 Fiware-ServicePath: "/"
 
-        odaa:
-            base_url: "https://www.odaa.dk"
+        open_data_dk:
+            base_url: "https://portal.opendata.dk"
             options:
               timeout: 2
 
@@ -78,9 +78,9 @@ guzzle:
                 Accept: "application/json"
 
         detskeriaarhus:
-            base_url: "http://api.detskeriaarhus.dk"
+            base_url: "https://api.detskeriaarhus.dk"
             options:
-              timeout: 5
+              timeout: 30
 
             # custom headers
             headers:
