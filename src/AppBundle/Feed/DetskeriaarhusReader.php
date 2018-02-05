@@ -177,12 +177,18 @@ class DetskeriaarhusReader extends BaseFeedReader {
 
 					// Time
 					$startTime          = strtotime( $first->startDate );
+					$endTime          = strtotime( $last->endDate );
+
+					$asset['TimeInstant'] = [
+						'type' => 'urn:oc:attributeType:ISO8601',
+						'value' => gmdate('Y-m-d\TH:i:s.000\Z', $startTime),
+					];
+
 					$asset['startTime'] = [
 						'type'  => 'urn:oc:attributeType:ISO8601',
 						'value' => gmdate( 'Y-m-d\TH:i:s.000\Z', $startTime ),
 					];
 
-					$endTime          = strtotime( $last->endDate );
 					$asset['endTime'] = [
 						'type'  => 'urn:oc:attributeType:ISO8601',
 						'value' => gmdate( 'Y-m-d\TH:i:s.000\Z', $endTime ),
