@@ -13,76 +13,71 @@ use DateTime;
 use DateTimeZone;
 use stdClass;
 
-abstract class BaseFriluftslivPolygonReader extends BaseFeedReader
-{
+abstract class BaseFriluftslivPolygonReader extends BaseFeedReader {
 
-    public function normalizeForOrganicity()
-    {
-        $odaa_data = $this->getGeoData($this->feed_path);
-        $sensors_array = $odaa_data['features'];
-        $last_modified = $odaa_data['Last-Modified'];
-        $last_modified_timestamp = strtotime($last_modified);
+	public function normalizeForOrganicity() {
+		$open_data_dk_data       = $this->getGeoData( $this->feed_path );
+		$sensors_array           = $open_data_dk_data['features'];
+		$last_modified           = $open_data_dk_data['Last-Modified'];
+		$last_modified_timestamp = strtotime( $last_modified );
 
-        $assets = [];
+		$assets = [];
 
-        $lastSyncCache = $this->cache->getItem($this->id_string);
-        if (!$lastSyncCache->isHit()) {
-            $lastSync = null;
-        } else {
-            $lastSync = $lastSyncCache->get();
-        }
+		$lastSyncCache = $this->cache->getItem( $this->id_string );
+		if ( ! $lastSyncCache->isHit() ) {
+			$lastSync = null;
+		} else {
+			$lastSync = $lastSyncCache->get();
+		}
 
-        if ($lastSync < $last_modified_timestamp) {
+		if ( $lastSync < $last_modified_timestamp ) {
 
-            foreach ($sensors_array as $record) {
+			foreach ( $sensors_array as $record ) {
 
-                $asset = [
-                  'id' => 'urn:oc:entity:aarhus:friluftsliv:'.$this->id_string.':'.md5($record->properties->Navn),
-                  'type' => 'urn:oc:entityType:'.$this->type,
+				$asset = [
+					'id'   => 'urn:oc:entity:aarhus:friluftsliv:' . $this->id_string . ':' . md5( $record->properties->Navn ),
+					'type' => 'urn:oc:entityType:' . $this->sanitizeText( $this->type ),
 
-                  'origin' => [
-                    'type' => 'urn:oc:attributeType:origin',
-                    'value' => $this->origin_value,
-                    'metadata' => [
-                      'urls' => [
-                        'type' => 'urls',
-                        'value' => $this->origin_url,
-                      ],
-                    ],
-                  ],
-                ];
+					'origin' => [
+						'type'     => 'urn:oc:attributeType:origin',
+						'value'    => $this->sanitizeText( $this->origin_value ),
+						'metadata' => [
+							'urls' => [
+								'type'  => 'urls',
+								'value' => $this->sanitizeUrl( $this->origin_url ),
+							],
+						],
+					],
+				];
 
-                // Time
-                $asset['TimeInstant'] = [
-                  'type' => 'urn:oc:attributeType:ISO8601',
-                  'value' => gmdate('Y-m-d\TH:i:s.000\Z', $last_modified_timestamp),
-                ];
+				// Time
+				$asset['TimeInstant'] = [
+					'type'  => 'urn:oc:attributeType:ISO8601',
+					'value' => gmdate( 'Y-m-d\TH:i:s.000\Z', $last_modified_timestamp ),
+				];
 
-                $asset['bookable'] = [
-                  'type' => 'urn:oc:datatype:boolean',
-                  'value' => $record->properties->Bookbar === 'Ja' ? 'true' : 'false',
-                ];
-                $asset['name'] = [
-                  'type' => 'urn:oc:attributeType:name',
-                  'value' => $this->sanitizeText($record->properties->Navn),
-                ];
+				$asset['bookable'] = [
+					'type'  => 'urn:oc:datatype:boolean',
+					'value' => $record->properties->Bookbar === 'Ja' ? 'true' : 'false',
+				];
+				$asset['name']     = [
+					'type'  => 'urn:oc:attributeType:name',
+					'value' => $this->sanitizeText( $record->properties->Navn ),
+				];
 
-                // Location
+				// Location
 
-                $asset['location'] = [
-                  'type' => 'geo:json',
-                  'value' => $record->geometry,
-                ];
+				$asset['location'] = [
+					'type'  => 'geo:json',
+					'value' => $record->geometry,
+				];
 
-                $assets[] = $asset;
+				$assets[] = $asset;
 
-            }
+			}
+		}
 
-            $lastSyncCache->set($last_modified_timestamp);
-            $this->cache->save($lastSyncCache);
-        }
-
-        return $assets;
-    }
+		return $assets;
+	}
 
 }

@@ -17,15 +17,15 @@ services:
     app.orion.query:
       alias: guzzle.client.orion_query
 
-    app.odaa.fetch:
-      alias: guzzle.client.odaa
+    app.open_data_dk.fetch:
+      alias: guzzle.client.open_data_dk
 
     app.detskeriaarhus.fetch:
       alias: guzzle.client.detskeriaarhus
 
     app.feed_reader_factory:
       class: AppBundle\Service\FeedReaderFactory
-      arguments: ["@app.odaa.fetch", "@app.orion.batch", "@app.detskeriaarhus.fetch", "@cache.app"]
+      arguments: ["@app.open_data_dk.fetch", "@app.orion.batch", "@app.detskeriaarhus.fetch", "@cache.app"]
 
     app.jobs_service:
       class: AppBundle\Service\JobsService

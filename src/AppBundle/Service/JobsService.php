@@ -7,31 +7,28 @@ use ResqueBundle\Resque\Resque;
 
 class JobsService
 {
-    private $resque;
+  private $resque;
 
-    public function __construct(Resque $resque)
-    {
-        $this->resque = $resque;
-    }
+  public function __construct(Resque $resque)
+  {
+    $this->resque = $resque;
+  }
 
-    public function isAllreadyQueued($class)
-    {
-        // get resque
-        $timestamps = $this->resque->getDelayedJobTimestamps();
-        $waiting = $this->resque->getNumberOfDelayedJobs();
+  public function isAllreadyQueued($class)
+  {
+    $timestamps = $this->resque->getDelayedJobTimestamps();
+    $className  = get_class($class);
 
-        $classname = get_class($class);
-
-        foreach ($timestamps as $timestamp) {
-            $delayed = $this->resque->getJobsForTimestamp($timestamp[0]);
-            foreach ($delayed as $job) {
-                if ($classname === $job['class']) {
-                    return true;
-                }
-            }
+    foreach ($timestamps as $timestamp) {
+      $delayed = $this->resque->getJobsForTimestamp($timestamp[0]);
+      foreach ($delayed as $job) {
+        if ( $className === $job['class']) {
+          return true;
         }
-
-        return false;
+      }
     }
+
+    return false;
+  }
 
 }
