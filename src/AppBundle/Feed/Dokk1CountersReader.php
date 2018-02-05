@@ -43,8 +43,7 @@ class Dokk1CountersReader extends BaseFeedReader {
 				$attributes = [];
 
 				// Time
-				$time = DateTime::createFromFormat( 'Y-m-d\TH:i:s', $record->time );
-				$time->setTimezone( new DateTimeZone( 'Europe/Copenhagen' ) );
+				$time = DateTime::createFromFormat( 'Y-m-d\TH:i:s', $record->time, new DateTimeZone( 'Europe/Copenhagen' ) );
 
 				$asset['TimeInstant'] = [
 					'type'  => 'urn:oc:attributeType:ISO8601',
