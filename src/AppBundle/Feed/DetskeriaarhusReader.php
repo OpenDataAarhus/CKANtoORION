@@ -163,13 +163,17 @@ class DetskeriaarhusReader extends BaseFeedReader {
 					$asset['excerpt'] = [
 						'type'  => 'urn:oc:attributeType:excerpt',
 						'value' => $this->sanitizeText( $record->excerpt ),
-						'metadata' => [
+					];
+
+					$tagsValue = $this->sanitizeText( implode( ', ', $record->tags ) );
+					if(!empty($tagsValue)) {
+						$asset['excerpt']['metadata'] = [
 							'tags' => [
 								'type' => 'event:tags',
 								'value' => $this->sanitizeText( implode( ', ', $record->tags ) ),
-							]
-						]
-					];
+							],
+						];
+					}
 
 					// Time
 					$startTime          = strtotime( $first->startDate );
