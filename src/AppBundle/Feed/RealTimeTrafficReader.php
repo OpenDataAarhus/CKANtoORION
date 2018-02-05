@@ -36,7 +36,7 @@ class RealTimeTrafficReader extends BaseFeedReader {
 
 					'origin' => [
 						'type'     => 'urn:oc:attributeType:origin',
-						'value'    => 'Traffic flow data from ODAA',
+						'value'    => 'Traffic flow data from OpenDataDK',
 						'metadata' => [
 							'urls' => [
 								'type'  => 'urls',

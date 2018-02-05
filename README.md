@@ -1,6 +1,6 @@
 # Organicity Proxy
 ## CKANtoORION
-Scripts to fetch, convert and post specific datasets from ODAA/CKAN to OASC/ORION
+Scripts to fetch, convert and post specific datasets from OpenDataDK/CKAN to OASC/ORION
 
 **Based on:**  
 Symfony3  
