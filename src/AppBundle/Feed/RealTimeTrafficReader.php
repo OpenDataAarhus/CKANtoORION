@@ -47,8 +47,7 @@ class RealTimeTrafficReader extends BaseFeedReader {
 				];
 
 				// Time
-				$time = DateTime::createFromFormat( 'Y-m-d\TH:i:s', $record->TIMESTAMP );
-				$time->setTimezone( new DateTimeZone( 'Europe/Copenhagen' ) );
+				$time = DateTime::createFromFormat( 'Y-m-d\TH:i:s', $record->TIMESTAMP, new DateTimeZone( 'UTC' ) );
 
 				$asset['TimeInstant'] = [
 					'type'  => 'urn:oc:attributeType:ISO8601',
