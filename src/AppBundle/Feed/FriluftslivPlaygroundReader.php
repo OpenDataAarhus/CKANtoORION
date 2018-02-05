@@ -19,12 +19,12 @@ class FriluftslivPlaygroundReader extends BaseFeedReader {
 	protected $id_string = 'playgrounds';
 	protected $type = 'playground';
 	protected $origin_value = 'Public Playgrounds in Aarhus';
-	protected $origin_url = 'https://www.odaa.dk/dataset/legepladser';
+	protected $origin_url = 'https://portal.opendata.dk/dataset/legepladser';
 
 	public function normalizeForOrganicity() {
-		$odaa_data               = $this->getGeoData( $this->feed_path );
-		$sensors_array           = $odaa_data['features'];
-		$last_modified           = $odaa_data['Last-Modified'];
+		$open_data_dk_data       = $this->getGeoData( $this->feed_path );
+		$sensors_array           = $open_data_dk_data['features'];
+		$last_modified           = $open_data_dk_data['Last-Modified'];
 		$last_modified_timestamp = strtotime( $last_modified );
 
 		$assets = [];
