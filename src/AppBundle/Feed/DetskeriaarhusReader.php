@@ -20,26 +20,14 @@ use ForceUTF8\Encoding;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\Cache\Adapter\TraceableAdapter;
 
-class DetskeriaarhusReader {
+class DetskeriaarhusReader extends BaseFeedReader {
 	const FEED_PATH = '/api/events';
-
-	private $detskeriaarhusClient;
-	private $orionUpdater;
-	private $cache;
-
-	public function __construct( Client $detskeriaarhusClient, Client $orionUpdater, TraceableAdapter $cache ) {
-		$this->detskeriaarhusClient = $detskeriaarhusClient;
-		$this->orionUpdater         = $orionUpdater;
-		$this->cache                = $cache;
-	}
 
 	protected function getPagedData( $next_url, $records = [] ) {
 		if ( ! empty( $next_url ) ) {
 
-			$client = $this->detskeriaarhusClient;
-
 			try {
-				$response = $client->get( $next_url );
+				$response = $this->client->get( $next_url );
 			} catch ( RequestException $e ) {
 				echo Psr7\str( $e->getRequest() );
 				if ( $e->hasResponse() ) {
@@ -74,7 +62,6 @@ class DetskeriaarhusReader {
 
 	private function getPlaceData( $events ) {
 
-		$client = $this->detskeriaarhusClient;
 		$places = [];
 
 		foreach ( $events as $event ) {
@@ -89,7 +76,7 @@ class DetskeriaarhusReader {
 					// Place endpoint performance i poor :-(
 					set_time_limit( 45 );
 					try {
-						$response = $client->get( $placeID );
+						$response = $this->client->get( $placeID );
 
 						// https://github.com/8p/GuzzleBundle/issues/48
 						$response->getBody()->rewind();
@@ -201,12 +188,9 @@ class DetskeriaarhusReader {
 						$list[] = [ 'startDate' => $occurrence->startDate, 'endDate' => $occurrence->endDate ];
 					}
 
-					$asset['occurences'] = [
-						'type'     => 'urn:oc:attributeType:count',
-						'value'    => $count,
-						'metadata' => [
-							'list' => $list,
-						],
+					$asset['numberOfOccurrences'] = [
+						'type' => 'urn:oc:attributeType:numberOfOccurrences',
+						'value' => $count,
 					];
 
 					$asset['organizer'] = [

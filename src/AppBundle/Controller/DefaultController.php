@@ -169,6 +169,15 @@ class DefaultController extends Controller {
 	}
 
 	/**
+	 * @Route("/friluftsliv_playgrounds", name="friluftsliv_playgrounds")
+	 * @Method("GET")
+	 */
+	public function friluftslivPlaygroundsAction(Request $request)
+	{
+		return $this->baseFeedReaderAction($request);
+	}
+
+	/**
 	 * @Route("/detskeriaarhus", name="detskeriaarhus")
 	 * @Method("GET")
 	 */

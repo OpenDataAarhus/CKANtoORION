@@ -15,11 +15,13 @@ use AppBundle\Feed\FriluftslivKioskReader;
 use AppBundle\Feed\FriluftslivMountainBikeTrailsReader;
 use AppBundle\Feed\FriluftslivNaturCenterReader;
 use AppBundle\Feed\FriluftslivParksReader;
+use AppBundle\Feed\FriluftslivPlaygroundReader;
 use AppBundle\Feed\FriluftslivRunningTrailsReader;
 use AppBundle\Feed\FriluftslivShelterReader;
 use AppBundle\Feed\FriluftslivToiletReader;
 use AppBundle\Feed\FriluftslivTreeClimbingReader;
 use AppBundle\Feed\DetskeriaarhusReader;
+use AppBundle\Job\FriluftslivPlaygroundJob;
 use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
@@ -119,7 +121,7 @@ class FeedReaderFactory {
 				break;
 
 			case 'friluftsliv_playgrounds':
-				return new FriluftslivPlaygroundReader( $this->odaaClient, $this->orionUpdater, $this->adapter );
+				return new FriluftslivPlaygroundReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
 				break;
 
 			case 'detskeriaarhus':

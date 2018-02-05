@@ -15,12 +15,12 @@ use Exception;
 use ForceUTF8\Encoding;
 
 abstract class BaseFeedReader {
-	protected $odaaClient;
+	protected $client;
 	protected $orionUpdater;
 	protected $cache;
 
-	public function __construct( Client $odaaClient, Client $orionUpdater, $cache ) {
-		$this->odaaClient   = $odaaClient;
+	public function __construct( Client $client, Client $orionUpdater, $cache ) {
+		$this->client       = $client;
 		$this->orionUpdater = $orionUpdater;
 		$this->cache        = $cache;
 	}
@@ -30,10 +30,8 @@ abstract class BaseFeedReader {
 
 	protected function getPagedData( $next_url, $records = [] ) {
 		if ( ! empty( $next_url ) ) {
-			$client = $this->odaaClient;
-
 			try {
-				$response = $client->get( $next_url );
+				$response = $this->client->get( $next_url );
 			} catch ( RequestException $e ) {
 				echo Psr7\str( $e->getRequest() );
 				if ( $e->hasResponse() ) {
@@ -66,10 +64,8 @@ abstract class BaseFeedReader {
 
 	protected function getGeoData( $url, $records = [] ) {
 		if ( ! empty( $url ) ) {
-			$client = $this->odaaClient;
-
 			try {
-				$response = $client->get( $url );
+				$response = $this->client->get( $url );
 			} catch ( RequestException $e ) {
 				echo Psr7\str( $e->getRequest() );
 				if ( $e->hasResponse() ) {
