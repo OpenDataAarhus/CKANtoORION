@@ -7,7 +7,7 @@ use ResqueBundle\Resque\ContainerAwareJob;
 use Symfony\Component\Translation\Interval;
 
 class Dokk1CountersJob extends BaseJob {
-	protected $interval = 3600; // 60 * 60
+	protected $interval = 300; // 5 * 60
 
 	public function run( $args ) {
 		parent::run( $args );
