@@ -21,12 +21,11 @@ use AppBundle\Feed\FriluftslivShelterReader;
 use AppBundle\Feed\FriluftslivToiletReader;
 use AppBundle\Feed\FriluftslivTreeClimbingReader;
 use AppBundle\Feed\DetskeriaarhusReader;
-use AppBundle\Job\FriluftslivPlaygroundJob;
 use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
 use AppBundle\Feed\Dokk1CountersReader;
-use Symfony\Component\Cache\Adapter\TraceableAdapter;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class FeedReaderFactory {
 	private $openDataDkClient;
@@ -34,7 +33,7 @@ class FeedReaderFactory {
 	private $detskeriaarhusClient;
 	private $adapter;
 
-	public function __construct( Client $openDataDkClient, Client $orionUpdater, Client $detskeriaarhusClient, TraceableAdapter $adapter ) {
+	public function __construct( Client $openDataDkClient, Client $orionUpdater, Client $detskeriaarhusClient, AdapterInterface $adapter ) {
 		$this->openDataDkClient     = $openDataDkClient;
 		$this->orionUpdater         = $orionUpdater;
 		$this->detskeriaarhusClient = $detskeriaarhusClient;
