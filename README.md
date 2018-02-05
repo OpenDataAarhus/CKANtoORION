@@ -16,8 +16,8 @@ To create jobs run:
 
 For jobs to be executed resque workers have to be started:  
 ```
-php bin/console resque:worker-start default   
-php bin/console resque:worker-start orion_sync      
-php bin/console resque:scheduledworker-start --force   
-```   
+php bin/console resque:worker-start default
+php bin/console resque:worker-start orion_sync
+php bin/console resque:scheduledworker-start --force
+```
 
