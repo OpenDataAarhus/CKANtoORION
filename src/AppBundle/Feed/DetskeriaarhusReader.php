@@ -163,11 +163,12 @@ class DetskeriaarhusReader extends BaseFeedReader {
 					$asset['excerpt'] = [
 						'type'  => 'urn:oc:attributeType:excerpt',
 						'value' => $this->sanitizeText( $record->excerpt ),
-					];
-
-					$asset['tags'] = [
-						'type'  => 'urn:oc:attributeType:tags',
-						'value' => $this->sanitizeText( implode( ', ', $record->tags ) ),
+						'metadata' => [
+							'tags' => [
+								'type' => 'event:tags',
+								'value' => $this->sanitizeText( implode( ', ', $record->tags ) ),
+							]
+						]
 					];
 
 					// Time
