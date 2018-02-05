@@ -3,7 +3,7 @@
 namespace AppBundle\Job;
 
 class RealTimeTrafficJob extends BaseJob {
-	protected $interval = 300; // 5 * 60
+	protected $interval = 600; // 10 * 60
 
 	public function run( $args ) {
 		parent::run( $args );
