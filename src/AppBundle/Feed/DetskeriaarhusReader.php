@@ -109,13 +109,11 @@ class DetskeriaarhusReader extends BaseFeedReader {
 	public function normalizeForOrganicity() {
 		$lastSyncCache = $this->cache->getItem( 'detskeriaarhus_lastSync' );
 		if ( ! $lastSyncCache->isHit() ) {
-			$next_url = self::FEED_PATH;
+			$next_url = self::FEED_PATH . '?updatedAt[after]=' . urlencode( '2016-01-01T00:00:00+00:00' );
 		} else {
 			$lastSync = $lastSyncCache->get();
 			$next_url = self::FEED_PATH . '?updatedAt[after]=' . urlencode( $lastSync );
 		}
-
-		$next_url = self::FEED_PATH;
 
 		$lastSync = gmdate( 'Y-m-d\TH:i:sP' );
 
@@ -134,7 +132,7 @@ class DetskeriaarhusReader extends BaseFeedReader {
 
 				$placeID = $first->place->{'@id'};
 
-				if ( ! empty( $places_array[ $placeID ] && ! empty( $first->startDate ) && ! empty( $last->endDate ) ) ) {
+				if ( array_key_exists( $placeID, $places_array ) && ! empty( $places_array[ $placeID ] && ! empty( $first->startDate ) && ! empty( $last->endDate ) ) ) {
 
 					$pathinfo = pathinfo( $record->{'@id'} );
 					$id       = $pathinfo['basename'];
@@ -166,22 +164,22 @@ class DetskeriaarhusReader extends BaseFeedReader {
 					];
 
 					$tagsValue = $this->sanitizeText( implode( ', ', $record->tags ) );
-					if(!empty($tagsValue)) {
+					if ( ! empty( $tagsValue ) ) {
 						$asset['excerpt']['metadata'] = [
 							'tags' => [
-								'type' => 'event:tags',
+								'type'  => 'event:tags',
 								'value' => $this->sanitizeText( implode( ', ', $record->tags ) ),
 							],
 						];
 					}
 
 					// Time
-					$startTime          = strtotime( $first->startDate );
-					$endTime          = strtotime( $last->endDate );
+					$startTime = strtotime( $first->startDate );
+					$endTime   = strtotime( $last->endDate );
 
 					$asset['TimeInstant'] = [
-						'type' => 'urn:oc:attributeType:ISO8601',
-						'value' => gmdate('Y-m-d\TH:i:s.000\Z', $startTime),
+						'type'  => 'urn:oc:attributeType:ISO8601',
+						'value' => gmdate( 'Y-m-d\TH:i:s.000\Z', $startTime ),
 					];
 
 					$asset['startTime'] = [
@@ -194,13 +192,8 @@ class DetskeriaarhusReader extends BaseFeedReader {
 						'value' => gmdate( 'Y-m-d\TH:i:s.000\Z', $endTime ),
 					];
 
-					$list = [];
-					foreach ( $record->occurrences as $occurrence ) {
-						$list[] = [ 'startDate' => $occurrence->startDate, 'endDate' => $occurrence->endDate ];
-					}
-
 					$asset['numberOfOccurrences'] = [
-						'type' => 'urn:oc:attributeType:numberOfOccurrences',
+						'type'  => 'urn:oc:attributeType:numberOfOccurrences',
 						'value' => $count,
 					];
 
@@ -260,6 +253,7 @@ class DetskeriaarhusReader extends BaseFeedReader {
 					];
 
 					$assets[] = $asset;
+
 				}
 			}
 
