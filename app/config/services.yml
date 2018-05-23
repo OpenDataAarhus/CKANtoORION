@@ -25,8 +25,8 @@ services:
 
     app.feed_reader_factory:
       class: AppBundle\Service\FeedReaderFactory
-      arguments: ["@app.open_data_dk.fetch", "@app.orion.batch", "@app.detskeriaarhus.fetch", "@cache.app"]
+      arguments: ['@app.open_data_dk.fetch', '@app.orion.batch', '@app.detskeriaarhus.fetch', '@cache.app']
 
     app.jobs_service:
       class: AppBundle\Service\JobsService
-      arguments: ["@resque"]
+      arguments: ['@ResqueBundle\Resque\Resque']
