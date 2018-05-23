@@ -11,7 +11,7 @@ class BaseJob extends ContainerAwareJob {
 	protected $resque;
 
 	public function run( $args ) {
-		$this->resque = $this->getContainer()->get( 'resque' );
+		$this->resque = $this->getContainer()->get( 'ResqueBundle\Resque\Resque' );
 		$jobsService  = $this->getContainer()->get( 'app.jobs_service' );
 
 		if ( ! $jobsService->isAllreadyQueued( $this ) ) {

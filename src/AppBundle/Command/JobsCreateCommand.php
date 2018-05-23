@@ -42,7 +42,7 @@ class JobsCreateCommand extends ContainerAwareCommand {
 
 	protected function execute( InputInterface $input, OutputInterface $output ) {
 		// get resque
-		$resque      = $this->getContainer()->get( 'resque' );
+		$resque      = $this->getContainer()->get( 'ResqueBundle\Resque\Resque' );
 		$jobsService = $this->getContainer()->get( 'app.jobs_service' );
 
 		// create your job
