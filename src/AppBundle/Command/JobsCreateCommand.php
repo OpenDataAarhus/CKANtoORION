@@ -22,6 +22,7 @@ use AppBundle\Job\FriluftslivRunningTrailsJob;
 use AppBundle\Job\FriluftslivShelterJob;
 use AppBundle\Job\FriluftslivToiletJob;
 use AppBundle\Job\FriluftslivTreeClimbingJob;
+use AppBundle\Job\RealTimeparkingJob;
 use AppBundle\Job\RealTimeTrafficJob;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -48,6 +49,7 @@ class JobsCreateCommand extends ContainerAwareCommand {
 		// create your job
 		$jobs[] = new Dokk1CountersJob();
 		$jobs[] = new RealTimeTrafficJob();
+		$jobs[] = new RealTimeparkingJob();
 		$jobs[] = new DetSkerIAarhusJob();
 
 		$jobs[] = new FriluftslivBeachAreaJob();

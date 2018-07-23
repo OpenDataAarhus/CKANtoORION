@@ -40,6 +40,14 @@ class DefaultController extends Controller {
 		return $this->baseFeedReaderAction( $request );
 	}
 
+  /**
+   * @Route("/realtimeparking", name="real_time_parking")
+   * @Method("GET")
+   */
+  public function realTimeParkingAction( Request $request ) {
+    return $this->baseFeedReaderAction( $request );
+  }
+
 	/**
 	 * @Route("/friluftsliv_firepits", name="friluftsliv_firepits")
 	 * @Method("GET")
