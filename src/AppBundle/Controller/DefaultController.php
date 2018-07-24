@@ -48,6 +48,14 @@ class DefaultController extends Controller {
     return $this->baseFeedReaderAction( $request );
   }
 
+  /**
+   * @Route("/realtimesolararray", name="real_time_solar_array")
+   * @Method("GET")
+   */
+  public function realTimeSolarArrayAction( Request $request ) {
+    return $this->baseFeedReaderAction( $request );
+  }
+
 	/**
 	 * @Route("/friluftsliv_firepits", name="friluftsliv_firepits")
 	 * @Method("GET")

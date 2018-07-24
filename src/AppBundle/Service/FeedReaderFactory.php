@@ -22,6 +22,7 @@ use AppBundle\Feed\FriluftslivToiletReader;
 use AppBundle\Feed\FriluftslivTreeClimbingReader;
 use AppBundle\Feed\DetskeriaarhusReader;
 use AppBundle\Feed\RealTimeParkingReader;
+use AppBundle\Feed\RealTimeSolarArrayReader;
 use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
@@ -54,6 +55,10 @@ class FeedReaderFactory {
 
       case 'real_time_parking':
         return new RealTimeParkingReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
+        break;
+
+      case 'real_time_solar_array':
+        return new RealTimeSolarArrayReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
         break;
 
 			case 'friluftsliv_firepits':
