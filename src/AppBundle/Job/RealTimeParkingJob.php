@@ -2,7 +2,7 @@
 
 namespace AppBundle\Job;
 
-class RealTimeparkingJob extends BaseJob {
+class RealTimeParkingJob extends BaseJob {
 	protected $interval = 300; // 5 * 60
 
 	public function run( $args ) {
