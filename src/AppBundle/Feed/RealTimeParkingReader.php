@@ -28,8 +28,7 @@ class RealTimeParkingReader extends BaseFeedReader
     'SALLING' => [56.154418, 10.208251],
     'Navitas' => [56.158705, 10.215408],
     'NewBusgadehuset' => [56.155099, 10.205934],
-    'Urban Level 1' => [56.153366, 10.213680],
-    'Urban Level 2+3' => [56.153366, 10.213680],
+    'DOKK1' => [56.153366, 10.213680],
   ];
 
   private $PARKING_GARAGE_NAMES = [
@@ -41,19 +40,30 @@ class RealTimeParkingReader extends BaseFeedReader
     'SALLING' => 'Salling Parkeringshus',
     'Navitas' => 'Navitas - Aarhus Havn',
     'NewBusgadehuset' => 'Busgaden Parkeringshus',
-    'Urban Level 1' => 'DOKK1 Parkering - Level 1',
-    'Urban Level 2+3' => 'DOKK1 Parkering - Level 2+3',
+    'DOKK1' => 'DOKK1 Parkering',
   ];
 
   public function normalizeForOrganicity()
   {
     $parking_array = $this->getPagedData(self::FEED_PATH_PARKING);
-    $assets = [];
 
     foreach ($parking_array as $record) {
+      $parking_array_keyed[$record->garageCode] = $record;
+    }
+
+    // 'DOKK1' contains no real data, 'Urban Level...' combined is current actual data for Dokk1
+    $parking_array_keyed['DOKK1']->vehicleCount = $parking_array_keyed['Urban Level 1']->vehicleCount;
+    $parking_array_keyed['DOKK1']->totalSpaces = $parking_array_keyed['Urban Level 1']->totalSpaces;
+
+    $parking_array_keyed['DOKK1']->vehicleCount += $parking_array_keyed['Urban Level 2+3']->vehicleCount;
+    $parking_array_keyed['DOKK1']->totalSpaces += $parking_array_keyed['Urban Level 2+3']->totalSpaces;
+
+    $assets = [];
+
+    foreach ($parking_array_keyed as $record) {
       if (array_key_exists($record->garageCode, $this->PARKING_GARAGE_LOCATIONS)) {
         $asset = [
-          'id' => 'urn:oc:entity:aarhus:parking:garage:' . $record->_id,
+          'id' => 'urn:oc:entity:aarhus:parking:garage:' . $record->_id . '-' . $record->garageCode,
           'type' => 'urn:oc:entityType:parkingGarage',
 
           'origin' => [
