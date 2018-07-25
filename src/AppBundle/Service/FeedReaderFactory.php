@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Feed\CityLabReader;
 use AppBundle\Feed\FriluftslivBeachAreaReader;
 use AppBundle\Feed\FriluftslivDogWalkingAreaReader;
 use AppBundle\Feed\FriluftslivFirepitsReader;
@@ -45,6 +46,10 @@ class FeedReaderFactory {
 	public function getFeedReader( string $identifier ) {
 
 		switch ( $identifier ) {
+      case 'city_lab':
+        return new CityLabReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
+        break;
+
 			case 'dokk1_counters':
 				return new Dokk1CountersReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
 				break;

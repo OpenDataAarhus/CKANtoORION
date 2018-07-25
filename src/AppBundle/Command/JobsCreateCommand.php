@@ -2,6 +2,8 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Feed\CityLabReader;
+use AppBundle\Job\CityLabJob;
 use AppBundle\Job\DetSkerIAarhusJob;
 use AppBundle\Job\Dokk1CountersJob;
 use AppBundle\Job\FriluftslivBeachAreaJob;
@@ -52,6 +54,7 @@ class JobsCreateCommand extends ContainerAwareCommand {
 		$jobs[] = new RealTimeTrafficJob();
 		$jobs[] = new RealTimeParkingJob();
 		$jobs[] = new RealTimeSolarArrayJob();
+		$jobs[] = new CityLabJob();
 
 		$jobs[] = new DetSkerIAarhusJob();
 
