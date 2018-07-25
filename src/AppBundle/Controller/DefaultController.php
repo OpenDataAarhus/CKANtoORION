@@ -33,6 +33,14 @@ class DefaultController extends Controller {
 	}
 
 	/**
+	 * @Route("/dokk1bookreturns", name="dokk1_book_returns")
+	 * @Method("GET")
+	 */
+	public function dokk1BookReturnsAction( Request $request ) {
+		return $this->baseFeedReaderAction( $request );
+	}
+
+	/**
 	 * @Route("/realtimetraffic", name="real_time_traffic")
 	 * @Method("GET")
 	 */

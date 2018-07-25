@@ -3,8 +3,10 @@
 namespace AppBundle\Command;
 
 use AppBundle\Feed\CityLabReader;
+use AppBundle\Feed\Dokk1BookReturnsReader;
 use AppBundle\Job\CityLabJob;
 use AppBundle\Job\DetSkerIAarhusJob;
+use AppBundle\Job\Dokk1BookReturnsJob;
 use AppBundle\Job\Dokk1CountersJob;
 use AppBundle\Job\FriluftslivBeachAreaJob;
 use AppBundle\Job\FriluftslivDogWalkingAreaJob;
@@ -51,6 +53,7 @@ class JobsCreateCommand extends ContainerAwareCommand {
 
 		// create your job
 		$jobs[] = new Dokk1CountersJob();
+		$jobs[] = new Dokk1BookReturnsJob();
 		$jobs[] = new RealTimeTrafficJob();
 		$jobs[] = new RealTimeParkingJob();
 		$jobs[] = new RealTimeSolarArrayJob();

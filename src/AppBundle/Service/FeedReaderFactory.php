@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Feed\CityLabReader;
+use AppBundle\Feed\Dokk1BookReturnsReader;
 use AppBundle\Feed\FriluftslivBeachAreaReader;
 use AppBundle\Feed\FriluftslivDogWalkingAreaReader;
 use AppBundle\Feed\FriluftslivFirepitsReader;
@@ -52,6 +53,10 @@ class FeedReaderFactory {
 
 			case 'dokk1_counters':
 				return new Dokk1CountersReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
+				break;
+
+			case 'dokk1_book_returns':
+				return new Dokk1BookReturnsReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
 				break;
 
 			case 'real_time_traffic':
