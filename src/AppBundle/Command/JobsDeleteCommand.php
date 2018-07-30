@@ -20,16 +20,19 @@ class JobsDeleteCommand extends ContainerAwareCommand {
 
 	protected function execute( InputInterface $input, OutputInterface $output ) {
 		// get resque
-		$resque = $this->getContainer()->get( 'resque' );
+		$resque = $this->getContainer()->get( 'ResqueBundle\Resque\Resque' );
 		$resque->clearQueue( 'default' );
 
 
 		// https://github.com/resquebundle/resque/issues/13
 		$timestamps = \Resque::redis()->zrange( 'delayed_queue_schedule', 0, - 1 );
+    $deleted    = 0;
 		foreach ( $timestamps as $timestamp ) {
 			\Resque::redis()->del( 'delayed:' . $timestamp );
+			$deleted++;
 		}
 		\Resque::redis()->del( 'delayed_queue_schedule' );
 
+    $output->writeln( '<info>' . $deleted . ' jobs deleted</info>' );
 	}
 }

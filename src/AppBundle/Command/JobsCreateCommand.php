@@ -2,7 +2,11 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Feed\CityLabReader;
+use AppBundle\Feed\Dokk1BookReturnsReader;
+use AppBundle\Job\CityLabJob;
 use AppBundle\Job\DetSkerIAarhusJob;
+use AppBundle\Job\Dokk1BookReturnsJob;
 use AppBundle\Job\Dokk1CountersJob;
 use AppBundle\Job\FriluftslivBeachAreaJob;
 use AppBundle\Job\FriluftslivDogWalkingAreaJob;
@@ -22,6 +26,8 @@ use AppBundle\Job\FriluftslivRunningTrailsJob;
 use AppBundle\Job\FriluftslivShelterJob;
 use AppBundle\Job\FriluftslivToiletJob;
 use AppBundle\Job\FriluftslivTreeClimbingJob;
+use AppBundle\Job\RealTimeParkingJob;
+use AppBundle\Job\RealTimeSolarArrayJob;
 use AppBundle\Job\RealTimeTrafficJob;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -42,12 +48,17 @@ class JobsCreateCommand extends ContainerAwareCommand {
 
 	protected function execute( InputInterface $input, OutputInterface $output ) {
 		// get resque
-		$resque      = $this->getContainer()->get( 'resque' );
+		$resque      = $this->getContainer()->get( 'ResqueBundle\Resque\Resque' );
 		$jobsService = $this->getContainer()->get( 'app.jobs_service' );
 
 		// create your job
 		$jobs[] = new Dokk1CountersJob();
+		$jobs[] = new Dokk1BookReturnsJob();
 		$jobs[] = new RealTimeTrafficJob();
+		$jobs[] = new RealTimeParkingJob();
+		$jobs[] = new RealTimeSolarArrayJob();
+		$jobs[] = new CityLabJob();
+
 		$jobs[] = new DetSkerIAarhusJob();
 
 		$jobs[] = new FriluftslivBeachAreaJob();

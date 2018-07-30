@@ -33,12 +33,44 @@ class DefaultController extends Controller {
 	}
 
 	/**
+	 * @Route("/dokk1bookreturns", name="dokk1_book_returns")
+	 * @Method("GET")
+	 */
+	public function dokk1BookReturnsAction( Request $request ) {
+		return $this->baseFeedReaderAction( $request );
+	}
+
+	/**
 	 * @Route("/realtimetraffic", name="real_time_traffic")
 	 * @Method("GET")
 	 */
 	public function realTimeTrafficAction( Request $request ) {
 		return $this->baseFeedReaderAction( $request );
 	}
+
+  /**
+   * @Route("/realtimeparking", name="real_time_parking")
+   * @Method("GET")
+   */
+  public function realTimeParkingAction( Request $request ) {
+    return $this->baseFeedReaderAction( $request );
+  }
+
+  /**
+   * @Route("/realtimesolararray", name="real_time_solar_array")
+   * @Method("GET")
+   */
+  public function realTimeSolarArrayAction( Request $request ) {
+    return $this->baseFeedReaderAction( $request );
+  }
+
+  /**
+   * @Route("/citylab", name="city_lab")
+   * @Method("GET")
+   */
+  public function cityLabAction( Request $request ) {
+    return $this->baseFeedReaderAction( $request );
+  }
 
 	/**
 	 * @Route("/friluftsliv_firepits", name="friluftsliv_firepits")
