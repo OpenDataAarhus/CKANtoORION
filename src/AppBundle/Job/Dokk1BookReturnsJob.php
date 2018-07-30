@@ -15,6 +15,7 @@ class Dokk1BookReturnsJob extends BaseJob {
 		$feed   = $this->getContainer()->get( 'app.feed_reader_factory' )->getFeedReader( 'dokk1_book_returns' );
 		$assets = $feed->normalizeForOrganicity();
 
+    $this->pointsPersister->persistPoints($assets, 'Dokk1BookReturns');
 		$this->spawnBatchJob( $assets );
 	}
 

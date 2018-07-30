@@ -56,3 +56,7 @@ services:
     app.jobs_service:
       class: AppBundle\Service\JobsService
       arguments: ['@ResqueBundle\Resque\Resque']
+
+    app.points_persister_service:
+      class: AppBundle\Service\AssetPointPersister
+      arguments: ['@doctrine.orm.entity_manager']
