@@ -1,8 +1,11 @@
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
+api:
+    resource: '.'
+    type: 'api_platform'
 
-# app/config/routing.yml
+app:
+    resource: '@AppBundle/Controller/'
+    type: 'annotation'
+
 ResqueBundle:
     resource: "@ResqueBundle/Resources/config/routing.xml"
     prefix:   /resque

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Feed\CityLabReader;
+use AppBundle\Feed\Dokk1BookReturnsReader;
 use AppBundle\Feed\FriluftslivBeachAreaReader;
 use AppBundle\Feed\FriluftslivDogWalkingAreaReader;
 use AppBundle\Feed\FriluftslivFirepitsReader;
@@ -21,6 +23,8 @@ use AppBundle\Feed\FriluftslivShelterReader;
 use AppBundle\Feed\FriluftslivToiletReader;
 use AppBundle\Feed\FriluftslivTreeClimbingReader;
 use AppBundle\Feed\DetskeriaarhusReader;
+use AppBundle\Feed\RealTimeParkingReader;
+use AppBundle\Feed\RealTimeSolarArrayReader;
 use Exception;
 use GuzzleHttp\Client;
 use AppBundle\Feed\RealTimeTrafficReader;
@@ -43,13 +47,29 @@ class FeedReaderFactory {
 	public function getFeedReader( string $identifier ) {
 
 		switch ( $identifier ) {
+      case 'city_lab':
+        return new CityLabReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
+        break;
+
 			case 'dokk1_counters':
 				return new Dokk1CountersReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
+				break;
+
+			case 'dokk1_book_returns':
+				return new Dokk1BookReturnsReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
 				break;
 
 			case 'real_time_traffic':
 				return new RealTimeTrafficReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
 				break;
+
+      case 'real_time_parking':
+        return new RealTimeParkingReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
+        break;
+
+      case 'real_time_solar_array':
+        return new RealTimeSolarArrayReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
+        break;
 
 			case 'friluftsliv_firepits':
 				return new FriluftslivFirepitsReader( $this->openDataDkClient, $this->orionUpdater, $this->adapter );
