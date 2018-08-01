@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     itemOperations={"get"}
  * )
  * @ORM\Entity
+ * @ORM\Table(indexes={@ORM\Index(name="search_idx", columns={"time_instant"})})
  */
 class RealTimeParkingPoint extends Point
 {
