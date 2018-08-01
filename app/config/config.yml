@@ -145,6 +145,15 @@ nelmio_cors:
         '^/': ~
 
 api_platform:
+    version: '1.0.0'
+    title: 'Aarhus Data Collector'
+    description: 'Collection of historic data for selected Aarhus IoT assets'
+    collection:
+        pagination:
+            enabled: true
+            client_enabled: false
+            client_items_per_page: false
+            items_per_page: 100
     http_cache:
         invalidation:
             enabled: false

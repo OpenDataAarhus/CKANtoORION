@@ -2,16 +2,20 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
  *     collectionOperations={"get"},
  *     itemOperations={"get"}
  * )
+ * @ApiFilter(DateFilter::class, properties={"timeInstant"})
+ * @ApiFilter(OrderFilter::class)
  * @ORM\Entity
  * @ORM\Table(indexes={@ORM\Index(name="search_idx", columns={"time_instant"})})
  */
