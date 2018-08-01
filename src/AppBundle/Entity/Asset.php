@@ -81,7 +81,7 @@ abstract class Asset
   /**
    * @return int
    */
-  public function getId(): int
+  public function getId()
   {
     return $this->id;
   }
@@ -89,7 +89,7 @@ abstract class Asset
   /**
    * @param int $id
    */
-  public function setId(int $id): void
+  public function setId($id): void
   {
     $this->id = $id;
   }
