@@ -18,47 +18,10 @@ abstract class Point
   private $id;
 
   /**
-   * @ORM\ManyToOne(targetEntity="Asset", inversedBy="points")
-   */
-  protected $asset;
-
-  /**
    * @var \DateTime
    * @ORM\Column(type="datetime")
    */
   protected $timeInstant;
-
-  /**
-   * @return int
-   */
-  public function getId()
-  {
-    return $this->id;
-  }
-
-  /**
-   * @param int $id
-   */
-  public function setId($id)
-  {
-    $this->id = $id;
-  }
-
-  /**
-   * @return mixed
-   */
-  public function getAsset()
-  {
-    return $this->asset;
-  }
-
-  /**
-   * @param mixed $asset
-   */
-  public function setAsset($asset)
-  {
-    $this->asset = $asset;
-  }
 
   /**
    * @return \DateTime

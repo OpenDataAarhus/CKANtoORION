@@ -8,7 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  * @ORM\Entity
  */
 class RealTimeSolarArrayPoint extends Point
@@ -21,6 +24,11 @@ class RealTimeSolarArrayPoint extends Point
    * @ORM\Column(type="integer")
    */
   private $id;
+
+  /**
+   * @ORM\ManyToOne(targetEntity="RealTimeSolarArrayAsset", inversedBy="points")
+   */
+  private $asset;
 
   /**
    * @var int
@@ -49,6 +57,38 @@ class RealTimeSolarArrayPoint extends Point
    * @ORM\Column(type="integer")
    */
   private $totalProduction;
+
+  /**
+   * @return int
+   */
+  public function getId(): int
+  {
+    return $this->id;
+  }
+
+  /**
+   * @param int $id
+   */
+  public function setId(int $id): void
+  {
+    $this->id = $id;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getAsset()
+  {
+    return $this->asset;
+  }
+
+  /**
+   * @param mixed $asset
+   */
+  public function setAsset($asset)
+  {
+    $this->asset = $asset;
+  }
 
   /**
    * @return int

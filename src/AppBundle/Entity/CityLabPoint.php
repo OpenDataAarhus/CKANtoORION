@@ -8,7 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  * @ORM\Entity
  */
 class CityLabPoint extends Point
@@ -21,6 +24,11 @@ class CityLabPoint extends Point
    * @ORM\Column(type="integer")
    */
   private $id;
+
+  /**
+   * @ORM\ManyToOne(targetEntity="CityLabAsset", inversedBy="points")
+   */
+  private $asset;
 
   /**
    * @var float
@@ -105,6 +113,22 @@ class CityLabPoint extends Point
    * @ORM\Column(type="integer", nullable=true)
    */
   private $windSpeed;
+
+  /**
+   * @return mixed
+   */
+  public function getAsset()
+  {
+    return $this->asset;
+  }
+
+  /**
+   * @param mixed $asset
+   */
+  public function setAsset($asset)
+  {
+    $this->asset = $asset;
+  }
 
   /**
    * @return float

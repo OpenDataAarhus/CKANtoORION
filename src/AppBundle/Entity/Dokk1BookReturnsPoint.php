@@ -8,7 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  * @ORM\Entity
  */
 class Dokk1BookReturnsPoint extends Point
@@ -21,6 +24,11 @@ class Dokk1BookReturnsPoint extends Point
    * @ORM\Column(type="integer")
    */
   private $id;
+
+  /**
+   * @ORM\ManyToOne(targetEntity="Dokk1BookReturnsAsset", inversedBy="points")
+   */
+  private $asset;
 
   /**
    * @var int
@@ -49,6 +57,22 @@ class Dokk1BookReturnsPoint extends Point
    * @ORM\Column(type="integer")
    */
   private $returnsToday;
+
+  /**
+   * @return mixed
+   */
+  public function getAsset()
+  {
+    return $this->asset;
+  }
+
+  /**
+   * @param mixed $asset
+   */
+  public function setAsset($asset)
+  {
+    $this->asset = $asset;
+  }
 
   /**
    * @return int
