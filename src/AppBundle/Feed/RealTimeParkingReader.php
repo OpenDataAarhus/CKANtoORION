@@ -103,12 +103,24 @@ class RealTimeParkingReader extends BaseFeedReader
         $asset['extraSpotNumber'] = [
           'type' => 'urn:oc:attributeType:extraSpotNumber',
           'value' => $record->totalSpaces - $record->vehicleCount,
+          'metadata' => [
+            'unit' => [
+              'type'  => 'urn:oc:uom:count',
+              'value' => 'count',
+            ],
+          ],
         ];
 
         // Total spots
         $asset['totalSpotNumber'] = [
           'type' => 'urn:oc:attributeType:totalSpotNumber',
           'value' => $record->totalSpaces,
+          'metadata' => [
+            'unit' => [
+              'type'  => 'urn:oc:uom:count',
+              'value' => 'count',
+            ],
+          ],
         ];
 
         $assets[] = $asset;
