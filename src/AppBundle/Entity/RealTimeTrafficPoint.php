@@ -38,9 +38,30 @@ class RealTimeTrafficPoint extends Point
   /**
    * @var int
    *
-   * @ORM\Column(type="integer")
+   * @ORM\Column(type="integer", nullable=true)
    */
   private $speedAverage;
+
+  /**
+   * @var int
+   *
+   * @ORM\Column(type="integer", nullable=true)
+   */
+  private $timeAvgMeasured;
+
+  /**
+   * @var int
+   *
+   * @ORM\Column(type="integer", nullable=true)
+   */
+  private $timeMedianMeasured;
+
+  /**
+   * @var int
+   *
+   * @ORM\Column(type="integer", nullable=true)
+   */
+  private $vehicleCount;
 
   /**
    * @return int
@@ -88,6 +109,54 @@ class RealTimeTrafficPoint extends Point
   public function setSpeedAverage($speedAverage)
   {
     $this->speedAverage = $speedAverage;
+  }
+
+  /**
+   * @return int
+   */
+  public function getTimeAvgMeasured()
+  {
+    return $this->timeAvgMeasured;
+  }
+
+  /**
+   * @param int $timeAvgMeasured
+   */
+  public function setTimeAvgMeasured($timeAvgMeasured)
+  {
+    $this->timeAvgMeasured = $timeAvgMeasured;
+  }
+
+  /**
+   * @return int
+   */
+  public function getTimeMedianMeasured()
+  {
+    return $this->timeMedianMeasured;
+  }
+
+  /**
+   * @param int $timeMedianMeasured
+   */
+  public function setTimeMedianMeasured($timeMedianMeasured)
+  {
+    $this->timeMedianMeasured = $timeMedianMeasured;
+  }
+
+  /**
+   * @return int
+   */
+  public function getVehicleCount()
+  {
+    return $this->vehicleCount;
+  }
+
+  /**
+   * @param int $vehicleCount
+   */
+  public function setVehicleCount($vehicleCount)
+  {
+    $this->vehicleCount = $vehicleCount;
   }
 
 }

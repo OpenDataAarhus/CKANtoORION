@@ -64,14 +64,47 @@ class RealTimeTrafficReader extends BaseFeedReader {
 				//Speed
 				$asset['speed:average'] = [
 					'type'     => 'urn:oc:attributeType:speed:average',
-					'value'    => strval( $record->avgSpeed ),
+					'value'    => (string) $record->avgSpeed ,
 					'metadata' => [
 						'name' => [
-							'type'  => 'urn:oc:dataType:string',
-							'value' => 'urn:oc:uom:kilometrePerHour',
+							'type'  => 'urn:oc:uom:kilometrePerHour',
+							'value' => 'kilometrePerHour',
 						],
 					],
 				];
+
+        $asset['vehicle:count'] = [
+          'type'     => 'urn:oc:attributeType:vehicle:count',
+          'value'    => (string) $record->vehicleCount ,
+          'metadata' => [
+            'unit' => [
+              'type'  => 'urn:oc:uom:count',
+              'value' => 'count',
+            ],
+          ],
+        ];
+
+        $asset['time:avgMeasured'] = [
+          'type'     => 'urn:oc:attributeType:vehicle:count',
+          'value'    => (string) $record->avgMeasuredTime ,
+          'metadata' => [
+            'unit' => [
+              'type'  => 'urn:oc:uom:seconds',
+              'value' => 'seconds',
+            ],
+          ],
+        ];
+
+        $asset['time:medianMeasured'] = [
+          'type'     => 'urn:oc:attributeType:vehicle:count',
+          'value'    => (string) $record->medianMeasuredTime ,
+          'metadata' => [
+            'unit' => [
+              'type'  => 'urn:oc:uom:seconds',
+              'value' => 'seconds',
+            ],
+          ],
+        ];
 
 				$assets[] = $asset;
 
