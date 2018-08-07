@@ -85,7 +85,7 @@ class RealTimeTrafficReader extends BaseFeedReader {
         ];
 
         $asset['time:avgMeasured'] = [
-          'type'     => 'urn:oc:attributeType:vehicle:count',
+          'type'     => 'urn:oc:attributeType:time:avgMeasured',
           'value'    => (string) $record->avgMeasuredTime ,
           'metadata' => [
             'unit' => [
@@ -96,7 +96,7 @@ class RealTimeTrafficReader extends BaseFeedReader {
         ];
 
         $asset['time:medianMeasured'] = [
-          'type'     => 'urn:oc:attributeType:vehicle:count',
+          'type'     => 'urn:oc:attributeType:time:medianMeasured',
           'value'    => (string) $record->medianMeasuredTime ,
           'metadata' => [
             'unit' => [
