@@ -3,23 +3,21 @@
  * Created by PhpStorm.
  * User: turegjorup
  * Date: 24/08/16
- * Time: 12:35
+ * Time: 12:35.
  */
 
 namespace AppBundle\Feed;
 
-use Exception;
 use DateTime;
 use DateTimeZone;
-use stdClass;
 
 class RealTimeSolarArrayReader extends BaseFeedReader
 {
-  // Sensor measurements
-  const FEED_PATH_SOLAR = '/api/action/datastore_search?resource_id=251528ca-8ec9-4b70-9960-83c4d0c4e7b6';
+    // Sensor measurements
+    const FEED_PATH_SOLAR = '/api/action/datastore_search?resource_id=251528ca-8ec9-4b70-9960-83c4d0c4e7b6';
 
-  // Geo coding
-  private $SOLAR_ARRAY_LOCATIONS = [
+    // Geo coding
+    private $SOLAR_ARRAY_LOCATIONS = [
     22224 => [56.2534933, 10.149014099999931],
     15523 => [56.153366, 10.213680],
     16017 => [56.15936499999999, 10.156983999999966],
@@ -40,10 +38,10 @@ class RealTimeSolarArrayReader extends BaseFeedReader
     16014 => [56.042567, 10.084386999999992],
     16012 => [56.1894995, 10.11318540000002],
     16013 => [56.129404, 10.15640600000006],
-    22229 => [56.12756109999999, 10.164483399999995]
+    22229 => [56.12756109999999, 10.164483399999995],
   ];
 
-  private $SOLAR_ARRAY_NAMES = [
+    private $SOLAR_ARRAY_NAMES = [
     22224 => 'Bakkegårdsskolen',
     15523 => 'Dokk1',
     16017 => 'Gammelgårdskolen',
@@ -64,18 +62,18 @@ class RealTimeSolarArrayReader extends BaseFeedReader
     16014 => 'Solbjergskolen',
     16012 => 'Tilst Skole',
     16013 => 'Vestergårdskolen',
-    22229 => 'Viby Skole'
+    22229 => 'Viby Skole',
   ];
 
-  public function normalizeForOrganicity()
-  {
-    $solar_array = $this->getPagedData(self::FEED_PATH_SOLAR);
-    $assets = [];
+    public function normalizeForOrganicity()
+    {
+        $solar_array = $this->getPagedData(self::FEED_PATH_SOLAR);
+        $assets = [];
 
-    foreach ($solar_array as $record) {
-      if (array_key_exists($record->sid, $this->SOLAR_ARRAY_LOCATIONS)) {
-        $asset = [
-          'id' => 'urn:oc:entity:aarhus:solar:fixed:' . $record->sid,
+        foreach ($solar_array as $record) {
+            if (array_key_exists($record->sid, $this->SOLAR_ARRAY_LOCATIONS)) {
+                $asset = [
+          'id' => 'urn:oc:entity:aarhus:solar:fixed:'.$record->sid,
           'type' => 'urn:oc:entityType:solararray',
 
           'origin' => [
@@ -90,81 +88,79 @@ class RealTimeSolarArrayReader extends BaseFeedReader
           ],
         ];
 
-        // Time
-        $time = DateTime::createFromFormat('Y-m-d\TH:i:s', $record->time, new DateTimeZone('Europe/Copenhagen'));
+                // Time
+                $time = DateTime::createFromFormat('Y-m-d\TH:i:s', $record->time, new DateTimeZone('Europe/Copenhagen'));
 
-        $asset['TimeInstant'] = [
+                $asset['TimeInstant'] = [
           'type' => 'urn:oc:attributeType:ISO8601',
           'value' => gmdate('Y-m-d\TH:i:s.000\Z', $time->getTimestamp()),
         ];
 
-        // Name
-        $asset['name'] = [
+                // Name
+                $asset['name'] = [
           'type' => 'urn:oc:attributeType:name',
-          'value' =>  $this->SOLAR_ARRAY_NAMES[$record->sid] . ' solcelleanlæg',
+          'value' => $this->SOLAR_ARRAY_NAMES[$record->sid].' solcelleanlæg',
         ];
 
-        // Location
-        $location = $this->SOLAR_ARRAY_LOCATIONS[$record->sid];
-        $asset['location'] = [
+                // Location
+                $location = $this->SOLAR_ARRAY_LOCATIONS[$record->sid];
+                $asset['location'] = [
           'type' => 'geo:point',
-          'value' => $location[0] . ', ' . $location[1],
+          'value' => $location[0].', '.$location[1],
         ];
 
-        // current - den aktuelle produktion i W
-        $asset['currentProduction'] = [
+                // current - den aktuelle produktion i W
+                $asset['currentProduction'] = [
           'type' => 'urn:oc:attributeType:currentProduction',
           'value' => $record->current,
           'metadata' => [
             'unit' => [
               'type' => 'urn:oc:uom:watt',
-              'value' => 'watt'
-            ]
-          ]
+              'value' => 'watt',
+            ],
+          ],
         ];
 
-        // currentmax - dagens maksimum
-        $asset['dailyMaxProduction'] = [
+                // currentmax - dagens maksimum
+                $asset['dailyMaxProduction'] = [
           'type' => 'urn:oc:attributeType:dailyMaxProduction',
           'value' => $record->currentmax,
           'metadata' => [
             'unit' => [
               'type' => 'urn:oc:uom:watt',
-              'value' => 'watt'
-            ]
-          ]
+              'value' => 'watt',
+            ],
+          ],
         ];
 
-        // daily - dagens produktion i Wh
-        $asset['dailyProduction'] = [
+                // daily - dagens produktion i Wh
+                $asset['dailyProduction'] = [
           'type' => 'urn:oc:attributeType:dailyProduction',
           'value' => $record->daily,
           'metadata' => [
             'unit' => [
               'type' => 'urn:oc:uom:watt-hour',
-              'value' => 'watt-hour'
-            ]
-          ]
+              'value' => 'watt-hour',
+            ],
+          ],
         ];
 
-        // total - produktion siden start i Wh
-        $asset['totalProduction'] = [
+                // total - produktion siden start i Wh
+                $asset['totalProduction'] = [
           'type' => 'urn:oc:attributeType:totalProduction',
           'value' => $record->total,
           'metadata' => [
             'unit' => [
               'type' => 'urn:oc:uom:watt-hour',
-              'value' => 'watt-hour'
-            ]
-          ]
+              'value' => 'watt-hour',
+            ],
+          ],
         ];
 
-        $assets[] = $asset;
+                $assets[] = $asset;
+            }
+        }
 
-      }
+        return $assets;
     }
-
-    return $assets;
-  }
-
 }

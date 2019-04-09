@@ -2,16 +2,18 @@
 
 namespace AppBundle\Job;
 
-class RealTimeTrafficJob extends BaseJob {
-	protected $interval = 300; // 5 * 60
+class RealTimeTrafficJob extends BaseJob
+{
+    protected $interval = 300; // 5 * 60
 
-	public function run( $args ) {
-		parent::run( $args );
+    public function run($args)
+    {
+        parent::run($args);
 
-		$feed   = $this->getContainer()->get( 'app.feed_reader_factory' )->getFeedReader( 'real_time_traffic' );
-		$assets = $feed->normalizeForOrganicity();
+        $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('real_time_traffic');
+        $assets = $feed->normalizeForOrganicity();
 
-    $this->pointsPersister->persistPointsByTimestamp($assets, 'RealTimeTraffic');
-		$this->spawnBatchJob( $assets );
-	}
+        $this->pointsPersister->persistPointsByTimestamp($assets, 'RealTimeTraffic');
+        $this->spawnBatchJob($assets);
+    }
 }

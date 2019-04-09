@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,14 +13,14 @@ use Doctrine\ORM\Mapping as ORM;
  * )
  * @ORM\Entity
  */
-class CityProbeAsset extends Asset {
-	/**
-	 * @var ArrayCollection
-	 *
-	 * @ORM\OneToMany(targetEntity="CityProbePoint", mappedBy="asset", cascade={"persist"}, orphanRemoval=true)
-	 * @ORM\OrderBy({"timeInstant"="ASC"})
-	 * @ApiSubresource
-	 */
-	private $points;
-
+class CityProbeAsset extends Asset
+{
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="CityProbePoint", mappedBy="asset", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OrderBy({"timeInstant"="ASC"})
+     * @ApiSubresource
+     */
+    private $points;
 }

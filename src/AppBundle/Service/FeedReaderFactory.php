@@ -35,25 +35,24 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class FeedReaderFactory
 {
-  private $openDataDkClient;
-  private $orionUpdater;
-  private $detskeriaarhusClient;
-  private $adapter;
-  private $entityManager;
+    private $openDataDkClient;
+    private $orionUpdater;
+    private $detskeriaarhusClient;
+    private $adapter;
+    private $entityManager;
 
-  public function __construct(Client $openDataDkClient, Client $orionUpdater, Client $detskeriaarhusClient, AdapterInterface $adapter, EntityManager $entityManager)
-  {
-    $this->openDataDkClient = $openDataDkClient;
-    $this->orionUpdater = $orionUpdater;
-    $this->detskeriaarhusClient = $detskeriaarhusClient;
-    $this->adapter = $adapter;
-    $this->entityManager = $entityManager;
-  }
+    public function __construct(Client $openDataDkClient, Client $orionUpdater, Client $detskeriaarhusClient, AdapterInterface $adapter, EntityManager $entityManager)
+    {
+        $this->openDataDkClient = $openDataDkClient;
+        $this->orionUpdater = $orionUpdater;
+        $this->detskeriaarhusClient = $detskeriaarhusClient;
+        $this->adapter = $adapter;
+        $this->entityManager = $entityManager;
+    }
 
-  public function getFeedReader(string $identifier)
-  {
-
-    switch ($identifier) {
+    public function getFeedReader(string $identifier)
+    {
+        switch ($identifier) {
       case 'city_lab':
         return new CityLabReader($this->openDataDkClient, $this->orionUpdater, $this->adapter);
         break;
@@ -161,6 +160,5 @@ class FeedReaderFactory
       default:
         throw new Exception('unknown feed $identifier');
     }
-  }
-
+    }
 }

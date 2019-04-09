@@ -43,6 +43,7 @@
         "twig/twig": "^1.0||^2.0"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
         "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^3.0"
     },
@@ -60,6 +61,15 @@
         ],
         "post-update-cmd": [
             "@symfony-scripts"
+        ],
+        "check": [
+            "@php-cs-check"
+        ],
+        "php-cs-check": [
+            "php vendor/bin/php-cs-fixer fix --dry-run --diff src/"
+        ],
+        "php-cs-fix": [
+            "php vendor/bin/php-cs-fixer fix src/"
         ]
     },
     "config": {
