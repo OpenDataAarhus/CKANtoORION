@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Feed\CityLabReader;
 use AppBundle\Feed\Dokk1BookReturnsReader;
 use AppBundle\Job\CityLabJob;
+use AppBundle\Job\CityProbeJob;
 use AppBundle\Job\DetSkerIAarhusJob;
 use AppBundle\Job\Dokk1BookReturnsJob;
 use AppBundle\Job\Dokk1CountersJob;
@@ -57,7 +58,8 @@ class JobsTestCommand extends ContainerAwareCommand {
 //    $job = new CityLabJob();
 //    $job = new RealTimeParkingJob();
 //    $job = new RealTimeSolarArrayJob();
-    $job = new Dokk1BookReturnsJob();
+//    $job = new Dokk1BookReturnsJob();
+    $job = new CityProbeJob([]);
 
     $args = [
       'kernel.root_dir' => '/vagrant/htdocs/app',

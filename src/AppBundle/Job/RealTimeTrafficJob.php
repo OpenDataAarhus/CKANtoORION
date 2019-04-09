@@ -11,7 +11,7 @@ class RealTimeTrafficJob extends BaseJob {
 		$feed   = $this->getContainer()->get( 'app.feed_reader_factory' )->getFeedReader( 'real_time_traffic' );
 		$assets = $feed->normalizeForOrganicity();
 
-    $this->pointsPersister->persistPoints($assets, 'RealTimeTraffic');
+    $this->pointsPersister->persistPointsByTimestamp($assets, 'RealTimeTraffic');
 		$this->spawnBatchJob( $assets );
 	}
 }

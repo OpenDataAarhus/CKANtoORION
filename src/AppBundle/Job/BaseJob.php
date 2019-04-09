@@ -4,7 +4,6 @@ namespace AppBundle\Job;
 
 use AppBundle\OrionSync\SyncJob;
 use ResqueBundle\Resque\ContainerAwareJob;
-use Symfony\Component\Translation\Interval;
 
 class BaseJob extends ContainerAwareJob
 {
@@ -27,7 +26,7 @@ class BaseJob extends ContainerAwareJob
 
   }
 
-  protected function spawnSingleJobs($assets)
+  protected function spawnSingleJobs($assets): void
   {
     foreach ($assets as $asset) {
       $syncJob = new SyncJob();
@@ -39,25 +38,14 @@ class BaseJob extends ContainerAwareJob
     }
   }
 
-  // @TODO Test to see if it's the batch job that cause problems with subscription updates
-  protected function spawnBatchJob($assets)
+  protected function spawnBatchJob($assets): void
   {
-    $seconds = 1;
-    $count = 0;
+    $syncJob = new SyncJob();
+    $syncJob->args = [
+      'assets' => $assets,
+    ];
 
-    // @TODO / Hack: Notifications seems to skip every 5. Shuffle to ensure diff order each time
-    ksort($assets);
-
-    foreach ($assets as $asset) {
-      $syncJob = new SyncJob();
-      $syncJob->args = [
-        'assets' => [$asset],
-      ];
-
-      $this->resque->enqueueIn($seconds, $syncJob);
-      $seconds = ($count % 3 == 0) ? $seconds + 1 : $seconds;
-      $count++;
-    }
+    $this->resque->enqueue($syncJob);
   }
 
 }

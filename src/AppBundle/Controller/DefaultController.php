@@ -72,6 +72,14 @@ class DefaultController extends Controller {
     return $this->baseFeedReaderAction( $request );
   }
 
+  /**
+   * @Route("/cityprobe", name="city_probe")
+   * @Method("GET")
+   */
+  public function cityProbeAction( Request $request ) {
+    return $this->baseFeedReaderAction( $request );
+  }
+
 	/**
 	 * @Route("/friluftsliv_firepits", name="friluftsliv_firepits")
 	 * @Method("GET")

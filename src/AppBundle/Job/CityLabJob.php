@@ -11,7 +11,7 @@ class CityLabJob extends BaseJob {
 		$feed   = $this->getContainer()->get( 'app.feed_reader_factory' )->getFeedReader( 'city_lab' );
 		$assets = $feed->normalizeForOrganicity();
 
-    $this->pointsPersister->persistPoints($assets, 'CityLab');
+    $this->pointsPersister->persistPointsByTimestamp($assets, 'CityLab');
 		$this->spawnBatchJob( $assets );
 	}
 }

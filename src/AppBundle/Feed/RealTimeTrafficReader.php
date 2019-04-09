@@ -15,12 +15,13 @@ use stdClass;
 
 class RealTimeTrafficReader extends BaseFeedReader {
 	// Sensor list/meta data
-	const FEED_PATH_SENSORS = '/api/action/datastore_search?resource_id=c3097987-c394-4092-ad1d-ad86a81dbf37';
+	private const FEED_PATH_SENSORS = '/api/action/datastore_search?resource_id=c3097987-c394-4092-ad1d-ad86a81dbf37';
 
 	// Sensor measurements
-	const FEED_PATH_TRAFFIC = '/api/action/datastore_search?resource_id=b3eeb0ff-c8a8-4824-99d6-e0a3747c8b0d';
+	private const FEED_PATH_TRAFFIC = '/api/action/datastore_search?resource_id=b3eeb0ff-c8a8-4824-99d6-e0a3747c8b0d';
 
-	public function normalizeForOrganicity() {
+	public function normalizeForOrganicity(): array
+  {
 		$sensors_array = $this->getPagedData( self::FEED_PATH_SENSORS );
 		$traffic_array = $this->getPagedData( self::FEED_PATH_TRAFFIC );
 		$assets        = [];

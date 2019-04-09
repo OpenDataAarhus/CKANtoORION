@@ -51,7 +51,7 @@ services:
 
     app.feed_reader_factory:
       class: AppBundle\Service\FeedReaderFactory
-      arguments: ['@app.open_data_dk.fetch', '@app.orion.batch', '@app.detskeriaarhus.fetch', '@cache.app']
+      arguments: ['@app.open_data_dk.fetch', '@app.orion.batch', '@app.detskeriaarhus.fetch', '@cache.app', '@doctrine.orm.entity_manager']
 
     app.jobs_service:
       class: AppBundle\Service\JobsService

@@ -15,7 +15,7 @@ class Dokk1CountersJob extends BaseJob {
 		$feed   = $this->getContainer()->get( 'app.feed_reader_factory' )->getFeedReader( 'dokk1_counters' );
 		$assets = $feed->normalizeForOrganicity();
 
-		$this->pointsPersister->persistPoints($assets, 'Dokk1Counters');
+		$this->pointsPersister->persistPointsByTimestamp($assets, 'Dokk1Counters');
 		$this->spawnBatchJob( $assets );
 	}
 

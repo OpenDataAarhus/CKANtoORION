@@ -13,13 +13,14 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use Exception;
 use ForceUTF8\Encoding;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 abstract class BaseFeedReader {
 	protected $client;
 	protected $orionUpdater;
 	protected $cache;
 
-	public function __construct( Client $client, Client $orionUpdater, $cache ) {
+	public function __construct( Client $client, Client $orionUpdater, AdapterInterface $cache ) {
 		$this->client       = $client;
 		$this->orionUpdater = $orionUpdater;
 		$this->cache        = $cache;
@@ -27,28 +28,28 @@ abstract class BaseFeedReader {
 
 	abstract public function normalizeForOrganicity();
 
-  protected function getData($url, $query = null) {
-    if ( ! empty( $url ) ) {
-      try {
-        $response = $this->client->request( 'GET', $url, ['query' => $query] );
-      } catch ( RequestException $e ) {
-        echo Psr7\str( $e->getRequest() );
-        if ( $e->hasResponse() ) {
-          echo Psr7\str( $e->getResponse() );
-        }
-        throw new Exception( 'Network Error retrieving: ' . $url );
-      }
+	protected function getData( $url, $query = null ) {
+		if ( ! empty( $url ) ) {
+			try {
+				$response = $this->client->request( 'GET', $url, [ 'query' => $query ] );
+			} catch ( RequestException $e ) {
+				echo Psr7\str( $e->getRequest() );
+				if ( $e->hasResponse() ) {
+					echo Psr7\str( $e->getResponse() );
+				}
+				throw new Exception( 'Network Error retrieving: ' . $url );
+			}
 
-      // https://github.com/8p/GuzzleBundle/issues/48
-      $response->getBody()->rewind();
+			// https://github.com/8p/GuzzleBundle/issues/48
+			$response->getBody()->rewind();
 
-      $content = json_decode( $response->getBody()->getContents() );
+			$content = json_decode( $response->getBody()->getContents() );
 
-      return  $content->result->records;
-    }
+			return $content->result->records;
+		}
 
-    throw new Exception( '$url cannot be empty' );
-  }
+		throw new Exception( '$url cannot be empty' );
+	}
 
 	protected function getPagedData( $next_url, $records = [] ) {
 		if ( ! empty( $next_url ) ) {

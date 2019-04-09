@@ -11,7 +11,7 @@ class RealTimeSolarArrayJob extends BaseJob {
 		$feed   = $this->getContainer()->get( 'app.feed_reader_factory' )->getFeedReader( 'real_time_solar_array' );
 		$assets = $feed->normalizeForOrganicity();
 
-    $this->pointsPersister->persistPoints($assets, 'RealTimeSolarArray');
+    $this->pointsPersister->persistPointsByTimestamp($assets, 'RealTimeSolarArray');
 		$this->spawnBatchJob( $assets );
 	}
 }

@@ -11,7 +11,9 @@ use Symfony\Component\Translation\Interval;
 
 class SyncJob extends ContainerAwareJob {
 
-	public function __construct() {
+	public function __construct( $args = [] ) {
+		parent::__construct( $args );
+
 		$this->queue = 'orion_sync';
 	}
 
@@ -27,13 +29,12 @@ class SyncJob extends ContainerAwareJob {
 	 *
 	 * @throws Exception
 	 */
-
-	protected function batchAction( $assets, $actionType = 'APPEND' ) {
+	protected function batchAction( &$assets, $actionType = 'APPEND' ): void {
 		$client = $this->getContainer()->get( 'app.orion.batch' );
 
 		$body = [
 			'actionType' => $actionType,
-			'entities'   => $assets,
+			'entities'   => array_values( $assets ),
 		];
 		$json = json_encode( $body );
 
@@ -55,8 +56,8 @@ class SyncJob extends ContainerAwareJob {
 		} catch ( RequestException $e ) {
 			if ( $e->hasResponse() ) {
 				$body        = json_decode( $e->getResponse()->getBody()->getContents() );
-				$error       = isset( $body->error ) ? $body->error : 'UNKNOWN';
-				$description = isset( $body->description ) ? $body->description : 'UNKNOWN';
+				$error       = $body->error ?? 'UNKNOWN';
+				$description = $body->description ?? 'UNKNOWN';
 				throw new Exception( 'Orion/RequestException: ' . $e->getCode() . ', ' . $error . ', ' . $description . ' - Request Body: ' . $json );
 			} else {
 				throw new Exception( 'Guzzle/RequestException - Request Body: ' . $json . ' - ' . $e->getMessage() );
@@ -64,8 +65,8 @@ class SyncJob extends ContainerAwareJob {
 		} catch ( ClientException $e ) {
 			if ( $e->hasResponse() ) {
 				$body        = json_decode( $e->getResponse()->getBody()->getContents() );
-				$error       = isset( $body->error ) ? $body->error : 'UNKNOWN';
-				$description = isset( $body->description ) ? $body->description : 'UNKNOWN';
+				$error       = $body->error ?? 'UNKNOWN';
+				$description = $body->description ?? 'UNKNOWN';
 				throw new Exception( 'Orion/ClientException: ' . $e->getCode() . ', ' . $error . ', ' . $description . ' - Request Body: ' . $json );
 			} else {
 				throw new Exception( 'Guzzle/ClientException - Request Body: ' . $json . ' - ' . $e->getMessage() );
