@@ -43,12 +43,13 @@ class JobsTestCommand extends ContainerAwareCommand
         $job = new CityProbeJob([]);
 
         $args = [
-      'kernel.root_dir' => '/vagrant/htdocs/app',
-      'kernel.debug' => true,
-      'kernel.environment' => 'dev',
-      'resque.retry_strategy' => [60],
-      'resque.retry_attempt' => 1,
-    ];
+            'kernel.root_dir' => '/vagrant/htdocs/app',
+            'kernel.debug' => true,
+            'kernel.environment' => 'dev',
+            'resque.retry_strategy' => [60],
+            'resque.retry_attempt' => 1,
+        ];
+
         $job->run($args);
     }
 }

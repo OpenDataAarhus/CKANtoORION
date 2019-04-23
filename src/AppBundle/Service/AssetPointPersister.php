@@ -142,8 +142,8 @@ class AssetPointPersister
         $qb = $this->em->createQueryBuilder();
 
         $qb->select('IDENTITY(p.asset) id, MAX(p.timeInstant) as timeInstant')
-      ->from($pointClassName, 'p')
-      ->groupBy('id');
+           ->from($pointClassName, 'p')
+           ->groupBy('id');
 
         $result = $qb->getQuery()->execute();
 

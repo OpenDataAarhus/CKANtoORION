@@ -30,8 +30,8 @@ class BaseJob extends ContainerAwareJob
         foreach ($assets as $asset) {
             $syncJob = new SyncJob();
             $syncJob->args = [
-        'assets' => [$asset],
-      ];
+                'assets' => [$asset],
+            ];
 
             $this->resque->enqueue($syncJob);
         }
@@ -41,8 +41,8 @@ class BaseJob extends ContainerAwareJob
     {
         $syncJob = new SyncJob();
         $syncJob->args = [
-      'assets' => $assets,
-    ];
+            'assets' => $assets,
+        ];
 
         $this->resque->enqueue($syncJob);
     }
