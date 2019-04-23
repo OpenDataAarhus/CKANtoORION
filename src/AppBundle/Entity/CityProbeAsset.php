@@ -13,12 +13,12 @@ use Doctrine\ORM\Mapping as ORM;
  * )
  * @ORM\Entity
  */
-class Dokk1CountersAsset extends Asset
+class CityProbeAsset extends Asset
 {
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Dokk1CountersPoint", mappedBy="asset", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="CityProbePoint", mappedBy="asset", cascade={"persist"}, orphanRemoval=true)
      * @ORM\OrderBy({"timeInstant"="ASC"})
      * @ApiSubresource
      */

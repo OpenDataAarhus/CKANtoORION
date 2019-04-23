@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: turegjorup
  * Date: 25/08/16
- * Time: 10:03
+ * Time: 10:03.
  */
 
 namespace AppBundle\Feed;
@@ -13,157 +13,163 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use Exception;
 use ForceUTF8\Encoding;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
-abstract class BaseFeedReader {
-	protected $client;
-	protected $orionUpdater;
-	protected $cache;
+abstract class BaseFeedReader
+{
+    protected $client;
+    protected $orionUpdater;
+    protected $cache;
 
-	public function __construct( Client $client, Client $orionUpdater, $cache ) {
-		$this->client       = $client;
-		$this->orionUpdater = $orionUpdater;
-		$this->cache        = $cache;
-	}
-
-	abstract public function normalizeForOrganicity();
-
-  protected function getData($url, $query = null) {
-    if ( ! empty( $url ) ) {
-      try {
-        $response = $this->client->request( 'GET', $url, ['query' => $query] );
-      } catch ( RequestException $e ) {
-        echo Psr7\str( $e->getRequest() );
-        if ( $e->hasResponse() ) {
-          echo Psr7\str( $e->getResponse() );
-        }
-        throw new Exception( 'Network Error retrieving: ' . $url );
-      }
-
-      // https://github.com/8p/GuzzleBundle/issues/48
-      $response->getBody()->rewind();
-
-      $content = json_decode( $response->getBody()->getContents() );
-
-      return  $content->result->records;
+    public function __construct(Client $client, Client $orionUpdater, AdapterInterface $cache)
+    {
+        $this->client = $client;
+        $this->orionUpdater = $orionUpdater;
+        $this->cache = $cache;
     }
 
-    throw new Exception( '$url cannot be empty' );
-  }
+    abstract public function normalizeForOrganicity();
 
-	protected function getPagedData( $next_url, $records = [] ) {
-		if ( ! empty( $next_url ) ) {
-			try {
-				$response = $this->client->get( $next_url );
-			} catch ( RequestException $e ) {
-				echo Psr7\str( $e->getRequest() );
-				if ( $e->hasResponse() ) {
-					echo Psr7\str( $e->getResponse() );
-				}
-				throw new Exception( 'Network Error retrieving: ' . $next_url );
-			}
+    protected function getData($url, $query = null)
+    {
+        if (!empty($url)) {
+            try {
+                $response = $this->client->request('GET', $url, ['query' => $query]);
+            } catch (RequestException $e) {
+                echo Psr7\str($e->getRequest());
+                if ($e->hasResponse()) {
+                    echo Psr7\str($e->getResponse());
+                }
+                throw new Exception('Network Error retrieving: '.$url);
+            }
 
-			// https://github.com/8p/GuzzleBundle/issues/48
-			$response->getBody()->rewind();
+            // https://github.com/8p/GuzzleBundle/issues/48
+            $response->getBody()->rewind();
 
-			$content = json_decode( $response->getBody()->getContents() );
+            $content = json_decode($response->getBody()->getContents());
 
-			$next_records = $content->result->records;
-			$next_url     = $content->result->_links->next;
+            return $content->result->records;
+        }
 
-			if ( empty( $next_records ) ) {
-				return $records;
-			} else {
-				foreach ( $next_records as $record ) {
-					$records[ $record->_id ] = $record;
-				}
+        throw new Exception('$url cannot be empty');
+    }
 
-				return $this->getPagedData( $next_url, $records );
-			}
-		}
+    protected function getPagedData($next_url, $records = [])
+    {
+        if (!empty($next_url)) {
+            try {
+                $response = $this->client->get($next_url);
+            } catch (RequestException $e) {
+                echo Psr7\str($e->getRequest());
+                if ($e->hasResponse()) {
+                    echo Psr7\str($e->getResponse());
+                }
+                throw new Exception('Network Error retrieving: '.$next_url);
+            }
 
-		throw new Exception( '$next_url cannot be empty' );
-	}
+            // https://github.com/8p/GuzzleBundle/issues/48
+            $response->getBody()->rewind();
 
-	protected function getGeoData( $url, $records = [] ) {
-		if ( ! empty( $url ) ) {
-			try {
-				$response = $this->client->get( $url );
-			} catch ( RequestException $e ) {
-				echo Psr7\str( $e->getRequest() );
-				if ( $e->hasResponse() ) {
-					echo Psr7\str( $e->getResponse() );
-				}
-				throw new Exception( 'Network Error retrieving: ' . $url );
-			}
+            $content = json_decode($response->getBody()->getContents());
 
-			// https://github.com/8p/GuzzleBundle/issues/48
-			$response->getBody()->rewind();
-			$content = $response->getBody()->getContents();
+            $next_records = $content->result->records;
+            $next_url = $content->result->_links->next;
 
-			if ( empty( $content ) ) {
-				throw new Exception( 'No content retrived from: ' . $url );
-			}
+            if (empty($next_records)) {
+                return $records;
+            } else {
+                foreach ($next_records as $record) {
+                    $records[$record->_id] = $record;
+                }
 
-			$content = Encoding::toUTF8( $content );
-			$content = json_decode( $content );
+                return $this->getPagedData($next_url, $records);
+            }
+        }
 
-			if ( ! $content ) {
-				throw new Exception( 'JSON Decode Error: ' . json_last_error_msg() );
-			}
+        throw new Exception('$next_url cannot be empty');
+    }
 
-			return [ 'features' => $content->features, 'Last-Modified' => $response->getHeader( 'Last-Modified' )[0] ];
-		}
+    protected function getGeoData($url, $records = [])
+    {
+        if (!empty($url)) {
+            try {
+                $response = $this->client->get($url);
+            } catch (RequestException $e) {
+                echo Psr7\str($e->getRequest());
+                if ($e->hasResponse()) {
+                    echo Psr7\str($e->getResponse());
+                }
+                throw new Exception('Network Error retrieving: '.$url);
+            }
 
-		throw new Exception( '$url cannot be empty' );
-	}
+            // https://github.com/8p/GuzzleBundle/issues/48
+            $response->getBody()->rewind();
+            $content = $response->getBody()->getContents();
 
-	/**
-	 * Sanitize text for Orion, remove whitespace and linebreaks, remove Orion forbidden characters
-	 *
-	 * @param $text
-	 *
-	 * @return mixed
-	 */
-	protected function sanitizeText( $text ) {
-		if ( $text ) {
-			$text = trim( preg_replace( '/\s+/', ' ', $text ) );
+            if (empty($content)) {
+                throw new Exception('No content retrived from: '.$url);
+            }
 
-			// https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
-			$text = str_replace( '<', '', $text );
-			$text = str_replace( '>', '', $text );
-			$text = str_replace( '"', '', $text );
-			$text = str_replace( "'", '', $text );
-			$text = str_replace( '=', '', $text );
-			$text = str_replace( ';', '', $text );
-			$text = str_replace( '(', '', $text );
-			$text = str_replace( ')', '', $text );
-		}
+            $content = Encoding::toUTF8($content);
+            $content = json_decode($content);
 
-		return $text;
-	}
+            if (!$content) {
+                throw new Exception('JSON Decode Error: '.json_last_error_msg());
+            }
 
-	/**
-	 * Sanitize url for Orion, remove Orion forbidden characters
-	 *
-	 * @param $url
-	 *
-	 * @return mixed
-	 */
-	protected function sanitizeUrl( $url ) {
-		if ( $url ) {
+            return ['features' => $content->features, 'Last-Modified' => $response->getHeader('Last-Modified')[0]];
+        }
 
-			// https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
-			$url = str_replace( '<', '%3C', $url );
-			$url = str_replace( '>', '%3E', $url );
-			$url = str_replace( '"', '%22', $url );
-			$url = str_replace( "'", '%27', $url );
-			$url = str_replace( '=', '%3D', $url );
-			$url = str_replace( ';', '%3B', $url );
-			$url = str_replace( '(', '%28', $url );
-			$url = str_replace( ')', '%29', $url );
-		}
+        throw new Exception('$url cannot be empty');
+    }
 
-		return $url;
-	}
+    /**
+     * Sanitize text for Orion, remove whitespace and linebreaks, remove Orion forbidden characters.
+     *
+     * @param $text
+     *
+     * @return mixed
+     */
+    protected function sanitizeText($text)
+    {
+        if ($text) {
+            $text = trim(preg_replace('/\s+/', ' ', $text));
 
+            // https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
+            $text = str_replace('<', '', $text);
+            $text = str_replace('>', '', $text);
+            $text = str_replace('"', '', $text);
+            $text = str_replace("'", '', $text);
+            $text = str_replace('=', '', $text);
+            $text = str_replace(';', '', $text);
+            $text = str_replace('(', '', $text);
+            $text = str_replace(')', '', $text);
+        }
+
+        return $text;
+    }
+
+    /**
+     * Sanitize url for Orion, remove Orion forbidden characters.
+     *
+     * @param $url
+     *
+     * @return mixed
+     */
+    protected function sanitizeUrl($url)
+    {
+        if ($url) {
+            // https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html#forbidden-characters
+            $url = str_replace('<', '%3C', $url);
+            $url = str_replace('>', '%3E', $url);
+            $url = str_replace('"', '%22', $url);
+            $url = str_replace("'", '%27', $url);
+            $url = str_replace('=', '%3D', $url);
+            $url = str_replace(';', '%3B', $url);
+            $url = str_replace('(', '%28', $url);
+            $url = str_replace(')', '%29', $url);
+        }
+
+        return $url;
+    }
 }

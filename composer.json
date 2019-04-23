@@ -1,5 +1,5 @@
 {
-    "name": "OpenDataAarhus/CKANtoORION",
+    "name": "open-data-aarhus/ckan-to-orion",
     "license": "MIT",
     "type": "project",
     "description": "Middleware for fetching, normalising and persisting data from CKAN to Orion",
@@ -7,51 +7,50 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
-        "psr-4": { "": "src/" },
+        "psr-4": {
+            "AppBundle\\": "src/AppBundle"
+        },
         "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
     },
     "autoload-dev": {
-        "psr-4": { "Tests\\": "tests/" }
+        "psr-4": { "Tests\\": "tests/" },
+        "files": [ "vendor/symfony/symfony/src/Symfony/Component/VarDumper/Resources/functions/dump.php" ]
     },
     "require": {
         "php": ">=7.2",
         "ext-apcu": "*",
-        "api-platform/core": "^2.3",
+        "api-platform/core": "^2.2",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-migrations-bundle": "^1.3",
         "doctrine/orm": "^2.5",
-        "eightpoints/guzzle-bundle": "^7.3",
-        "guzzlehttp/guzzle": "^6.0",
+        "eightpoints/guzzle-bundle": "^7.5",
+        "guzzlehttp/guzzle": "^6.3",
         "incenteev/composer-parameter-handler": "^2.0",
         "neitanod/forceutf8": "^2.0",
-        "nelmio/cors-bundle": "^1.4",
-        "phpdocumentor/reflection-docblock": "^3.0",
+        "nelmio/cors-bundle": "^1.5",
+        "phpdocumentor/reflection-docblock": "^4.3",
         "predis/predis": "^1.1",
         "resquebundle/resque": "^2.0",
         "sensio/distribution-bundle": "^5.0.19",
-        "sensio/framework-extra-bundle": "^3.0.2",
-        "symfony/cache": "^4.1",
+        "sensio/framework-extra-bundle": "^5.0.0",
+        "symfony/cache": "^3.3",
         "symfony/monolog-bundle": "^3.1.0",
-        "symfony/property-access": "^4.1",
-        "symfony/serializer": "^4.1",
-        "symfony/swiftmailer-bundle": "^2.3.10",
+        "symfony/polyfill-apcu": "^1.0",
+        "symfony/property-access": "^3.4",
+        "symfony/serializer": "^3.4",
+        "symfony/swiftmailer-bundle": "^2.6.4",
         "symfony/symfony": "3.4.*",
-        "twig/twig": "^1.0 || ^2.0"
+        "twig/twig": "^1.0||^2.0"
     },
     "require-dev": {
-        "api-platform/schema-generator": "^1.0 || ^2.0",
-        "behat/behat": "^3.1",
-        "behat/mink": "^1.7",
-        "behat/mink-browserkit-driver": "^1.3.1",
-        "behat/mink-extension": "^2.2",
-        "behat/symfony2-extension": "^2.1",
-        "behatch/contexts": "^2.5",
+        "friendsofphp/php-cs-fixer": "^2.14",
         "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^3.0"
     },
     "scripts": {
         "symfony-scripts": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
@@ -62,9 +61,21 @@
         ],
         "post-update-cmd": [
             "@symfony-scripts"
+        ],
+        "check": [
+            "@php-cs-check"
+        ],
+        "php-cs-check": [
+            "php vendor/bin/php-cs-fixer fix --dry-run --diff src/"
+        ],
+        "php-cs-fix": [
+            "php vendor/bin/php-cs-fixer fix src/"
         ]
     },
     "config": {
+        "platform": {
+            "php": "7.2"
+        },
         "sort-packages": true
     },
     "extra": {
@@ -73,12 +84,12 @@
         "symfony-var-dir": "var",
         "symfony-web-dir": "web",
         "symfony-tests-dir": "tests",
-        "symfony-assets-install": "hard",
+        "symfony-assets-install": "relative",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         },
         "branch-alias": {
-            "dev-master": "2.1-dev"
+            "dev-master": "3.4-dev"
         }
     }
 }
