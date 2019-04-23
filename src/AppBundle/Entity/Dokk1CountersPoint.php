@@ -16,7 +16,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @ApiFilter(DateFilter::class, properties={"timeInstant"})
  * @ApiFilter(OrderFilter::class)
  * @ORM\Entity
- * @ORM\Table(indexes={@ORM\Index(name="search_idx", columns={"time_instant"})})
+ * @ORM\Table(indexes={
+ *     @ORM\Index(name="search_idx", columns={"time_instant"}),
+ *     @ORM\Index(name="group_idx", columns={"asset_id", "time_instant"})
+ * })
  */
 class Dokk1CountersPoint extends Point
 {
