@@ -34,13 +34,13 @@ class JobsTestCommand extends ContainerAwareCommand
         $jobsService = $this->getContainer()->get('app.jobs_service');
 
         // create your job
-//    $job = new Dokk1CountersJob();
-//    $job = new RealTimeTrafficJob();
-//    $job = new CityLabJob();
-//    $job = new RealTimeParkingJob();
-//    $job = new RealTimeSolarArrayJob();
-//    $job = new Dokk1BookReturnsJob();
-        $job = new CityProbeJob([]);
+//        $job = new Dokk1CountersJob();
+//        $job = new RealTimeTrafficJob();
+        $job = new CityLabJob();
+//        $job = new RealTimeParkingJob();
+//        $job = new RealTimeSolarArrayJob();
+//        $job = new Dokk1BookReturnsJob();
+//        $job = new CityProbeJob([]);
 
         $args = [
             'kernel.root_dir' => '/vagrant/htdocs/app',
