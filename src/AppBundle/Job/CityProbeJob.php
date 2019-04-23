@@ -20,16 +20,6 @@ class CityProbeJob extends BaseJob
         $this->spawnBatchJob($assets);
     }
 
-    private function removeDuplicates(array &$assets): array
-    {
-        $result = [];
-        foreach ($assets as $asset) {
-            $result[$asset['id']] = $asset;
-        }
-
-        return $result;
-    }
-
     private function removeNullGeoPoints(array &$assets): array
     {
         return array_filter($assets, static function ($asset) {

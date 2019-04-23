@@ -54,7 +54,7 @@ class FeedReaderFactory
     {
         switch ($identifier) {
       case 'city_lab':
-        return new CityLabReader($this->openDataDkClient, $this->orionUpdater, $this->adapter);
+        return new CityLabReader($this->openDataDkClient, $this->orionUpdater, $this->adapter, $this->entityManager);
         break;
 
       case 'city_probe':

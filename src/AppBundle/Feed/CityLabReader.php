@@ -10,13 +10,19 @@ namespace AppBundle\Feed;
 
 use DateTime;
 use DateTimeZone;
+use Doctrine\ORM\EntityManager;
+use GuzzleHttp\Client;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class CityLabReader extends BaseFeedReader
 {
     // Sensor measurements
     const FEED_PATH_CITYLAB = '/api/action/datastore_search_sql';
+
+    private $entityManager;
+
     private $query = [
-        'sql' => 'SELECT * from "c65b055d-a020-4871-ab51-bdbc3fd73fd8" ORDER BY time DESC LIMIT 19',
+        'sql' => 'SELECT * from "c65b055d-a020-4871-ab51-bdbc3fd73fd8" WHERE _id > %d ORDER BY _id ASC LIMIT 190',
     ];
 
     // Geo coding
@@ -26,69 +32,94 @@ class CityLabReader extends BaseFeedReader
         '0004A30B001E307C' => [56.1571711, 10.213521700000001],
     ];
 
+    public function __construct(Client $client, Client $orionUpdater, AdapterInterface $cache, EntityManager $entityManager)
+    {
+        parent::__construct($client, $orionUpdater, $cache);
+        $this->entityManager = $entityManager;
+    }
+
     public function normalizeForOrganicity()
     {
-        $result = $this->getData(self::FEED_PATH_CITYLAB, $this->query);
+        $maxId = $this->getMaxPointsId();
+
+        $this->query['sql'] = sprintf($this->query['sql'], $maxId);
+        $records = $this->getData(self::FEED_PATH_CITYLAB, $this->query);
 
         $sensors = [];
-        foreach ($result as $sensor) {
-            $sensors[$sensor->sensor][$sensor->type] = $sensor;
+        foreach ($records as $record) {
+            $sensors[$record->sensor][$record->time][$record->type] = $record;
         }
 
         $assets = [];
 
-        foreach ($sensors as $id => $sensor) {
-            if (array_key_exists($id, self::SENSOR_ARRAY_LOCATIONS)) {
-                $asset = [
-                    'id' => 'urn:oc:entity:aarhus:citylab:'.$id,
-                    'type' => 'urn:oc:entityType:iotdevice',
+        foreach ($sensors as $id => $timestamps) {
+	        foreach ($timestamps as $timestamp => $sensor) {
+		        if ( array_key_exists( $id, self::SENSOR_ARRAY_LOCATIONS ) ) {
+			        $asset = [
+				        'id'   => 'urn:oc:entity:aarhus:citylab:' . $id,
+				        'type' => 'urn:oc:entityType:iotdevice',
 
-                    'origin' => [
-                        'type' => 'urn:oc:attributeType:origin',
-                        'value' => 'Aarhus CityLab data from OpenDataDK',
-                        'metadata' => [
-                            'urls' => [
-                                'type' => 'urls',
-                                'value' => 'https://portal.opendata.dk/dataset/sensordata',
-                            ],
-                        ],
-                    ],
-                ];
+				        'origin' => [
+					        'type'     => 'urn:oc:attributeType:origin',
+					        'value'    => 'Aarhus CityLab data from OpenDataDK',
+					        'metadata' => [
+						        'urls' => [
+							        'type'  => 'urls',
+							        'value' => 'https://portal.opendata.dk/dataset/sensordata',
+						        ],
+					        ],
+				        ],
+			        ];
 
-                $record = array_pop($sensor);
+			        $record = array_pop( $sensor );
 
-                // Time
-                $time = DateTime::createFromFormat('Y-m-d\TH:i:s.u', $record->time, new DateTimeZone('UTC'));
+			        // Time
+			        $time = DateTime::createFromFormat( 'Y-m-d\TH:i:s.u', $record->time, new DateTimeZone( 'UTC' ) );
 
-                $asset['TimeInstant'] = [
-                    'type' => 'urn:oc:attributeType:ISO8601',
-                    'value' => gmdate('Y-m-d\TH:i:s.000\Z', $time->getTimestamp()),
-                ];
+			        $asset['TimeInstant'] = [
+				        'type'  => 'urn:oc:attributeType:ISO8601',
+				        'value' => gmdate( 'Y-m-d\TH:i:s.000\Z', $time->getTimestamp() ),
+			        ];
 
-                // Name
-                $asset['name'] = [
-                    'type' => 'urn:oc:attributeType:name',
-                    'value' => 'CityLab Sensor '.$id,
-                ];
+			        // Name
+			        $asset['name'] = [
+				        'type'  => 'urn:oc:attributeType:name',
+				        'value' => 'CityLab Sensor ' . $id,
+			        ];
 
-                // Location
-                $location = self::SENSOR_ARRAY_LOCATIONS[$id];
-                $asset['location'] = [
-                    'type' => 'geo:point',
-                    'value' => $location[0].', '.$location[1],
-                ];
+			        // Location
+			        $location          = self::SENSOR_ARRAY_LOCATIONS[ $id ];
+			        $asset['location'] = [
+				        'type'  => 'geo:point',
+				        'value' => $location[0] . ', ' . $location[1],
+			        ];
 
-                $this->addReading($asset, $record);
+			        $this->addReading( $asset, $record );
+			        $this->setPointId($record->_id, $asset);
 
-                while ($sensor) {
-                    $this->addReading($asset, array_pop($sensor));
-                }
+			        while ($sensor) {
+			        	$record = array_pop($sensor);
+				        $this->addReading($asset, $record);
+				        $this->setPointId($record->_id, $asset);
+			        }
 
-                $assets[] = $asset;
-            }
+			        $assets[] = $asset;
+		        }
+	        }
         }
 
         return $assets;
+    }
+
+    private function setPointId(int $pointId, &$asset): void
+    {
+    	if (array_key_exists('pointId', $asset)) {
+    		if ($asset['pointId'] < $pointId) {
+		        $asset['pointId'] = $pointId;
+		    }
+	    } else {
+		    $asset['pointId'] = $pointId;
+	    }
     }
 
     private function addReading(&$asset, $record)
@@ -281,5 +312,16 @@ class CityLabReader extends BaseFeedReader
             default:
                 return 'UNKNOWN';
         }
+    }
+
+    private function getMaxPointsId(): int
+    {
+        $maxId = $this->entityManager->createQueryBuilder()
+                                     ->select('MAX(p.id)')
+                                     ->from('AppBundle:CityLabPoint', 'p')
+                                     ->getQuery()
+                                     ->getSingleScalarResult();
+
+        return $maxId ?? 0;
     }
 }

@@ -46,4 +46,14 @@ class BaseJob extends ContainerAwareJob
 
         $this->resque->enqueue($syncJob);
     }
+
+    protected function removeDuplicates(array &$assets): array
+    {
+        $result = [];
+        foreach ($assets as $asset) {
+            $result[$asset['id']] = $asset;
+        }
+
+        return $result;
+    }
 }

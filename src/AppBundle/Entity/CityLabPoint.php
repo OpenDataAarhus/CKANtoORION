@@ -27,9 +27,8 @@ class CityLabPoint extends Point
     /**
      * @var int The entity Id
      *
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
      */
     private $id;
 
