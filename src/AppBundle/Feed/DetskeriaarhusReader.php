@@ -14,7 +14,7 @@ use GuzzleHttp\Exception\RequestException;
 
 class DetskeriaarhusReader extends BaseFeedReader
 {
-    const FEED_PATH = '/api/events';
+    private const FEED_PATH = '/api/events';
 
     protected function getPagedData($next_url, $records = [])
     {

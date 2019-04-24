@@ -13,6 +13,6 @@ class DetSkerIAarhusJob extends BaseJob
         $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('detskeriaarhus');
         $assets = $feed->normalizeForOrganicity();
 
-        $this->spawnBatchJob($assets);
+        $this->spawnSingleJobs($assets);
     }
 }

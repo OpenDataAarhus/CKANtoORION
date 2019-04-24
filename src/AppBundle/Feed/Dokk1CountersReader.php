@@ -14,7 +14,7 @@ use DateTimeZone;
 
 class Dokk1CountersReader extends BaseFeedReader
 {
-    const FEED_PATH = '/api/3/action/datastore_search?resource_id=b82383a4-97ec-4377-b0ea-94b2e6fe70c0';
+    private const FEED_PATH = '/api/3/action/datastore_search?resource_id=b82383a4-97ec-4377-b0ea-94b2e6fe70c0';
 
     public function normalizeForOrganicity()
     {

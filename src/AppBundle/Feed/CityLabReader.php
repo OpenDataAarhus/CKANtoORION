@@ -17,12 +17,14 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 class CityLabReader extends BaseFeedReader
 {
     // Sensor measurements
-    const FEED_PATH_CITYLAB = '/api/action/datastore_search_sql';
+    private const FEED_PATH_CITYLAB = '/api/action/datastore_search_sql';
 
     private $entityManager;
 
+    // The 3 sensors have 3 + 6 + 10 = 19 measurements that get logged in individual rows.
+    // 570 / 19 = 30 measurements.
     private $query = [
-        'sql' => 'SELECT * from "c65b055d-a020-4871-ab51-bdbc3fd73fd8" WHERE _id > %d ORDER BY _id ASC LIMIT 190',
+        'sql' => 'SELECT * from "c65b055d-a020-4871-ab51-bdbc3fd73fd8" WHERE _id > %d ORDER BY _id ASC LIMIT 570',
     ];
 
     // Geo coding
@@ -53,59 +55,59 @@ class CityLabReader extends BaseFeedReader
         $assets = [];
 
         foreach ($sensors as $id => $timestamps) {
-	        foreach ($timestamps as $timestamp => $sensor) {
-		        if ( array_key_exists( $id, self::SENSOR_ARRAY_LOCATIONS ) ) {
-			        $asset = [
-				        'id'   => 'urn:oc:entity:aarhus:citylab:' . $id,
-				        'type' => 'urn:oc:entityType:iotdevice',
+            foreach ($timestamps as $timestamp => $sensor) {
+                if (array_key_exists($id, self::SENSOR_ARRAY_LOCATIONS)) {
+                    $asset = [
+                        'id' => 'urn:oc:entity:aarhus:citylab:'.$id,
+                        'type' => 'urn:oc:entityType:iotdevice',
 
-				        'origin' => [
-					        'type'     => 'urn:oc:attributeType:origin',
-					        'value'    => 'Aarhus CityLab data from OpenDataDK',
-					        'metadata' => [
-						        'urls' => [
-							        'type'  => 'urls',
-							        'value' => 'https://portal.opendata.dk/dataset/sensordata',
-						        ],
-					        ],
-				        ],
-			        ];
+                        'origin' => [
+                            'type' => 'urn:oc:attributeType:origin',
+                            'value' => 'Aarhus CityLab data from OpenDataDK',
+                            'metadata' => [
+                                'urls' => [
+                                    'type' => 'urls',
+                                    'value' => 'https://portal.opendata.dk/dataset/sensordata',
+                                ],
+                            ],
+                        ],
+                    ];
 
-			        $record = array_pop( $sensor );
+                    $record = array_pop($sensor);
 
-			        // Time
-			        $time = DateTime::createFromFormat( 'Y-m-d\TH:i:s.u', $record->time, new DateTimeZone( 'UTC' ) );
+                    // Time
+                    $time = DateTime::createFromFormat('Y-m-d\TH:i:s.u', $record->time, new DateTimeZone('UTC'));
 
-			        $asset['TimeInstant'] = [
-				        'type'  => 'urn:oc:attributeType:ISO8601',
-				        'value' => gmdate( 'Y-m-d\TH:i:s.000\Z', $time->getTimestamp() ),
-			        ];
+                    $asset['TimeInstant'] = [
+                        'type' => 'urn:oc:attributeType:ISO8601',
+                        'value' => gmdate('Y-m-d\TH:i:s.000\Z', $time->getTimestamp()),
+                    ];
 
-			        // Name
-			        $asset['name'] = [
-				        'type'  => 'urn:oc:attributeType:name',
-				        'value' => 'CityLab Sensor ' . $id,
-			        ];
+                    // Name
+                    $asset['name'] = [
+                        'type' => 'urn:oc:attributeType:name',
+                        'value' => 'CityLab Sensor '.$id,
+                    ];
 
-			        // Location
-			        $location          = self::SENSOR_ARRAY_LOCATIONS[ $id ];
-			        $asset['location'] = [
-				        'type'  => 'geo:point',
-				        'value' => $location[0] . ', ' . $location[1],
-			        ];
+                    // Location
+                    $location = self::SENSOR_ARRAY_LOCATIONS[$id];
+                    $asset['location'] = [
+                        'type' => 'geo:point',
+                        'value' => $location[0].', '.$location[1],
+                    ];
 
-			        $this->addReading( $asset, $record );
-			        $this->setPointId($record->_id, $asset);
+                    $this->addReading($asset, $record);
+                    $this->setPointId($record->_id, $asset);
 
-			        while ($sensor) {
-			        	$record = array_pop($sensor);
-				        $this->addReading($asset, $record);
-				        $this->setPointId($record->_id, $asset);
-			        }
+                    while ($sensor) {
+                        $record = array_pop($sensor);
+                        $this->addReading($asset, $record);
+                        $this->setPointId($record->_id, $asset);
+                    }
 
-			        $assets[] = $asset;
-		        }
-	        }
+                    $assets[] = $asset;
+                }
+            }
         }
 
         return $assets;
@@ -113,13 +115,13 @@ class CityLabReader extends BaseFeedReader
 
     private function setPointId(int $pointId, &$asset): void
     {
-    	if (array_key_exists('pointId', $asset)) {
-    		if ($asset['pointId'] < $pointId) {
-		        $asset['pointId'] = $pointId;
-		    }
-	    } else {
-		    $asset['pointId'] = $pointId;
-	    }
+        if (array_key_exists('pointId', $asset)) {
+            if ($asset['pointId'] < $pointId) {
+                $asset['pointId'] = $pointId;
+            }
+        } else {
+            $asset['pointId'] = $pointId;
+        }
     }
 
     private function addReading(&$asset, $record)

@@ -4,7 +4,7 @@ namespace AppBundle\Job;
 
 class CityProbeJob extends BaseJob
 {
-    protected $interval = 15; // 300; // 5 * 60
+    protected $interval = 300; // 5 * 60
 
     public function run($args)
     {

@@ -14,7 +14,7 @@ use DateTimeZone;
 
 class Dokk1BookReturnsReader extends BaseFeedReader
 {
-    const FEED_PATH = '/api/3/action/datastore_search?resource_id=5b9b00f9-543e-4ac0-994c-dbbc8b38e7e5';
+    private const FEED_PATH = '/api/3/action/datastore_search?resource_id=5b9b00f9-543e-4ac0-994c-dbbc8b38e7e5';
 
     public function normalizeForOrganicity()
     {
@@ -69,24 +69,24 @@ class Dokk1BookReturnsReader extends BaseFeedReader
                 ];
 
                 $asset['returns:past24hours'] = [
-          'value' => $record->min1440,
-          'metadata' => [
-            'unit' => [
-              'type' => 'urn:oc:uom:count',
-              'value' => 'count',
-            ],
-          ],
-        ];
+                    'value' => $record->min1440,
+                    'metadata' => [
+                        'unit' => [
+                            'type' => 'urn:oc:uom:count',
+                            'value' => 'count',
+                        ],
+                    ],
+                ];
 
                 $asset['returns:today'] = [
-          'value' => $record->today,
-          'metadata' => [
-            'unit' => [
-              'type' => 'urn:oc:uom:count',
-              'value' => 'count',
-            ],
-          ],
-        ];
+                    'value' => $record->today,
+                    'metadata' => [
+                        'unit' => [
+                            'type' => 'urn:oc:uom:count',
+                            'value' => 'count',
+                        ],
+                    ],
+                ];
 
                 // Location
                 $dokk1_LAT = 56.153394;
