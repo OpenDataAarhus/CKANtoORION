@@ -1,7 +1,7 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/service_container.html
 parameters:
-    #parameter_name: value
+#parameter_name: value
 
 services:
     # default configuration for services in *this* file
@@ -35,28 +35,76 @@ services:
     #         $someArgument: 'some_value'
 
     app.orion.enity:
-      alias: eight_points_guzzle.client.orion_enity
+        alias: eight_points_guzzle.client.orion_enity
 
     app.orion.batch:
-      alias: eight_points_guzzle.client.orion_batch
+        alias: eight_points_guzzle.client.orion_batch
 
     app.orion.query:
-      alias: eight_points_guzzle.client.orion_query
+        alias: eight_points_guzzle.client.orion_query
 
     app.open_data_dk.fetch:
-      alias: eight_points_guzzle.client.open_data_dk
+        alias: eight_points_guzzle.client.open_data_dk
 
     app.detskeriaarhus.fetch:
-      alias: eight_points_guzzle.client.detskeriaarhus
+        alias: eight_points_guzzle.client.detskeriaarhus
 
     app.feed_reader_factory:
-      class: AppBundle\Service\FeedReaderFactory
-      arguments: ['@app.open_data_dk.fetch', '@app.orion.batch', '@app.detskeriaarhus.fetch', '@cache.app', '@doctrine.orm.entity_manager']
+        class: AppBundle\Service\FeedReaderFactory
+        arguments: ['@app.open_data_dk.fetch', '@app.orion.batch', '@app.detskeriaarhus.fetch', '@cache.app', '@doctrine.orm.entity_manager']
 
     app.jobs_service:
-      class: AppBundle\Service\JobsService
-      arguments: ['@ResqueBundle\Resque\Resque']
+        class: AppBundle\Service\JobsService
+        arguments: ['@ResqueBundle\Resque\Resque']
 
     app.points_persister_service:
-      class: AppBundle\Service\AssetPointPersister
-      arguments: ['@doctrine.orm.entity_manager']
+        class: AppBundle\Service\AssetPointPersister
+        arguments: ['@doctrine.orm.entity_manager']
+
+    app.monitor.check.cityprobe:
+        class: AppBundle\HealthCheck\Asset\CityProbeCheck
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: liip_monitor.check, alias: check_cityprobe, group: assets }
+
+    app.monitor.check.citylab:
+        class: AppBundle\HealthCheck\Asset\CityLabCheck
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: liip_monitor.check, alias: check_citylab, group: assets }
+
+    app.monitor.check.real_time_traffic:
+        class: AppBundle\HealthCheck\Asset\RealTimeTrafficCheck
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: liip_monitor.check, alias: check_real_time_traffic, group: assets }
+
+    app.monitor.check.real_time_parking:
+        class: AppBundle\HealthCheck\Asset\RealTimeParkingCheck
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: liip_monitor.check, alias: check_real_time_parking, group: assets }
+
+    app.monitor.check.real_time_solar_array:
+        class: AppBundle\HealthCheck\Asset\RealTimeSolarArrayCheck
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: liip_monitor.check, alias: check_real_time_solar_array, group: assets }
+
+    app.monitor.check.dokk1_counters:
+        class: AppBundle\HealthCheck\Asset\Dokk1CountersCheck
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: liip_monitor.check, alias: check_dokk1_counters, group: assets }
+
+    app.monitor.check.dokk1_book_returns:
+        class: AppBundle\HealthCheck\Asset\Dokk1BookReturnsCheck
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: liip_monitor.check, alias: check_dokk1_book_returns, group: assets }
+
+    app.monitor.check.orion:
+        class: AppBundle\HealthCheck\OrionCheck
+        arguments: ['@app.orion.enity']
+        tags:
+            - { name: liip_monitor.check, alias: check_orion, group: orion }

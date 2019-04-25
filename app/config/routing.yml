@@ -9,3 +9,7 @@ app:
 ResqueBundle:
     resource: "@ResqueBundle/Resources/config/routing.xml"
     prefix:   /resque
+
+_monitor:
+    resource: "@LiipMonitorBundle/Resources/config/routing.xml"
+    prefix: /monitor/health

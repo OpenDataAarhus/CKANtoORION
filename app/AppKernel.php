@@ -22,6 +22,8 @@ class AppKernel extends Kernel
 
             new ResqueBundle\Resque\ResqueBundle(),
             new EightPoints\Bundle\GuzzleBundle\EightPointsGuzzleBundle(),
+
+	        new Liip\MonitorBundle\LiipMonitorBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
