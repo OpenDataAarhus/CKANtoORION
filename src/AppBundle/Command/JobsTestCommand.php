@@ -42,8 +42,10 @@ class JobsTestCommand extends ContainerAwareCommand
 //        $job = new RealTimeSolarArrayJob();
 //        $job = new RealTimeTrafficJob();
 
+	    $dir = $this->getContainer()->get('kernel')->getRootDir();
+
         $args = [
-            'kernel.root_dir' => '/vagrant/htdocs/app',
+            'kernel.root_dir' => $dir,
             'kernel.debug' => true,
             'kernel.environment' => 'dev',
             'resque.retry_strategy' => [60],
