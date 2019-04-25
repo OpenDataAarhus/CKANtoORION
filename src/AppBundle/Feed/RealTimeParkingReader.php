@@ -59,7 +59,7 @@ class RealTimeParkingReader extends BaseFeedReader
         $assets = [];
 
         foreach ($parking_array_keyed as $record) {
-            if (array_key_exists($record->garageCode, $this->PARKING_GARAGE_LOCATIONS)) {
+            if (array_key_exists($record->garageCode, self::PARKING_GARAGE_LOCATIONS)) {
                 $asset = [
                     'id' => 'urn:oc:entity:aarhus:parking:garage:'.$record->_id.'-'.$record->garageCode,
                     'type' => 'urn:oc:entityType:parkingGarage',
