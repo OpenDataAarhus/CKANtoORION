@@ -11,7 +11,7 @@ class RealTimeParkingCheck extends BaseAssetsCheck
     {
         $point = $this->getLatestPoint('RealTimeParkingPoint');
 
-        if ($this->checkAssetPoint($point, 600)) {
+        if ($this->checkAssetPoint($point, 1200)) {
             return new Success('Point is newer than interval');
         }
 
