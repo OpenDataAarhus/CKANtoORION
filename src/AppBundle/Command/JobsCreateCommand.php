@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Job\CityLabJob;
+use AppBundle\Job\CityProbeJob;
 use AppBundle\Job\DetSkerIAarhusJob;
 use AppBundle\Job\Dokk1BookReturnsJob;
 use AppBundle\Job\Dokk1CountersJob;
@@ -58,6 +59,7 @@ class JobsCreateCommand extends ContainerAwareCommand
         $jobs[] = new RealTimeParkingJob();
         $jobs[] = new RealTimeSolarArrayJob();
         $jobs[] = new CityLabJob();
+        $jobs[] = new CityProbeJob();
 
         $jobs[] = new DetSkerIAarhusJob();
 
