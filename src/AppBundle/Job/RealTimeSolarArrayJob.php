@@ -4,7 +4,7 @@ namespace AppBundle\Job;
 
 class RealTimeSolarArrayJob extends BaseJob
 {
-    protected $interval = 300; // 5 * 60
+	protected $interval = 240; // 4 * 60
 
     public function run($args)
     {
