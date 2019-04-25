@@ -22,9 +22,9 @@ class CityLabReader extends BaseFeedReader
     private $entityManager;
 
     // The 3 sensors have 3 + 6 + 10 = 19 measurements that get logged in individual rows.
-    // 570 / 19 = 30 measurements.
+    // 5700 / 19 = 300 measurements.
     private $query = [
-        'sql' => 'SELECT * from "c65b055d-a020-4871-ab51-bdbc3fd73fd8" WHERE _id > %d ORDER BY _id ASC LIMIT 570',
+        'sql' => 'SELECT * from "c65b055d-a020-4871-ab51-bdbc3fd73fd8" WHERE _id > %d ORDER BY _id ASC LIMIT 5700',
     ];
 
     // Geo coding
