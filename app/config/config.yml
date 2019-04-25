@@ -162,3 +162,16 @@ api_platform:
         shared_max_age: 3600
         vary: ['Content-Type', 'Authorization']
         public: true
+
+liip_monitor:
+    enable_controller: true
+    checks:
+        php_extensions: [apcu, json]
+        doctrine_dbal: default
+        doctrine_migrations:
+            migrations_with_doctrine_bundle_v2: default
+        redis:
+            name:
+                dsn: redis://localhost:6379
+        security_advisory:
+            lock_file:            '%kernel.root_dir%/../composer.lock'

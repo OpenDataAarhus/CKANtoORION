@@ -2,20 +2,17 @@
 
 namespace AppBundle\Job;
 
-use AppBundle\OrionSync\SyncJob;
-use ResqueBundle\Resque\ContainerAwareJob;
-use Symfony\Component\Translation\Interval;
+class DetSkerIAarhusJob extends BaseJob
+{
+    protected $interval = 3600; // 60 * 60
 
-class DetSkerIAarhusJob extends BaseJob {
-	protected $interval = 3600; // 60 * 60
+    public function run($args)
+    {
+        parent::run($args);
 
-	public function run( $args ) {
-		parent::run( $args );
+        $feed = $this->getContainer()->get('app.feed_reader_factory')->getFeedReader('detskeriaarhus');
+        $assets = $feed->normalizeForOrganicity();
 
-		$feed   = $this->getContainer()->get( 'app.feed_reader_factory' )->getFeedReader( 'detskeriaarhus' );
-		$assets = $feed->normalizeForOrganicity();
-
-		$this->spawnBatchJob( $assets );
-	}
-
+        $this->spawnSingleJobs($assets);
+    }
 }
