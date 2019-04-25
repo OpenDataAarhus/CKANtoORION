@@ -56,7 +56,11 @@ class CityLabReader extends BaseFeedReader
 
         foreach ($sensors as $id => $timestamps) {
             foreach ($timestamps as $timestamp => $sensor) {
-                if (array_key_exists($id, self::SENSOR_ARRAY_LOCATIONS)) {
+
+	            // Time
+	            $time = DateTime::createFromFormat('Y-m-d\TH:i:s.u', $timestamp, new DateTimeZone('UTC'));
+
+                if ($time !== false && array_key_exists($id, self::SENSOR_ARRAY_LOCATIONS)) {
                     $asset = [
                         'id' => 'urn:oc:entity:aarhus:citylab:'.$id,
                         'type' => 'urn:oc:entityType:iotdevice',
@@ -74,9 +78,6 @@ class CityLabReader extends BaseFeedReader
                     ];
 
                     $record = array_pop($sensor);
-
-                    // Time
-                    $time = DateTime::createFromFormat('Y-m-d\TH:i:s.u', $record->time, new DateTimeZone('UTC'));
 
                     $asset['TimeInstant'] = [
                         'type' => 'urn:oc:attributeType:ISO8601',
