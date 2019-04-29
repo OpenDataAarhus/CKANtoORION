@@ -11,7 +11,7 @@ class RealTimeTrafficCheck extends BaseAssetsCheck
     {
         $point = $this->getLatestPoint('RealTimeTrafficPoint');
 
-        if ($this->checkAssetPoint($point, 1200)) {
+        if ($this->checkAssetPoint($point, 3600)) {
             return new Success('Point is newer than interval');
         }
 

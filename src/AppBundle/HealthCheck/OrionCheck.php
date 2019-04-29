@@ -40,7 +40,7 @@ class OrionCheck implements CheckInterface
                     if ($entity && isset($entity->TimeInstant, $entity->TimeInstant->value)) {
                         $entityTimestamp = new \DateTime($entity->TimeInstant->value);
 
-                        $interval = new \DateInterval('PT600S');
+                        $interval = new \DateInterval('PT30M');
                         $now = new \DateTime();
 
                         if ($entityTimestamp > $now->sub($interval)) {
