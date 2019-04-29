@@ -11,7 +11,7 @@ class Dokk1BookReturnsCheck extends BaseAssetsCheck
     {
         $point = $this->getLatestPoint('Dokk1BookReturnsPoint');
 
-        if ($this->checkAssetPoint($point, 1200)) {
+        if ($this->checkAssetPoint($point, 3600)) {
             return new Success('Point is newer than interval');
         }
 
